@@ -53,7 +53,7 @@ $config = [
         */
     ],
     'params' => $params,
-    //'defaultRoute' => 'admin/create'
+    'defaultRoute' => 'admin/index'
 ];
 
 if (YII_ENV_DEV) {

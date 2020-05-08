@@ -5,12 +5,12 @@
 
 use app\widgets\Alert;
 use yii\helpers\Html;
-use yii\bootstrap\Nav;
-use yii\bootstrap\NavBar;
-use yii\widgets\Breadcrumbs;
-use app\assets\AppAsset;
+// use yii\widgets\Breadcrumbs;
+use app\assets\DashboardAsset;
+DashboardAsset::register($this);
 
-AppAsset::register($this);
+// use kartik\icons\FontAwesomeAsset;
+// FontAwesomeAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -18,7 +18,7 @@ AppAsset::register($this);
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <?php $this->registerCsrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
@@ -26,54 +26,28 @@ AppAsset::register($this);
 <body>
 <?php $this->beginBody() ?>
 
-<div class="wrap">
-    <?php
-    NavBar::begin([
-        'brandLabel' => Yii::$app->name,
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
-        ],
-    ]);
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
-            Yii::$app->user->isGuest ? (
-                ['label' => 'Login', 'url' => ['/site/login']]
-            ) : (
-                '<li>'
-                . Html::beginForm(['/site/logout'], 'post')
-                . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->username . ')',
-                    ['class' => 'btn btn-link logout']
-                )
-                . Html::endForm()
-                . '</li>'
-            )
-        ],
-    ]);
-    NavBar::end();
-    ?>
+<div class="wrapper">
+    <nav id="sidebar" class="sidebar">
+		<div class="sidebar-content ">
+			<a class="sidebar-brand" href="#"><i class="align-middle" data-feather="box"></i><span class="align-middle">UMN  SURVEY</span></a>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item active"><?= Html::a('Home', ['admin/index'], ['class' => 'sidebar-link']) ?></li>
+                <li class="sidebar-item"><?= Html::a('Create', ['admin/create'], ['class' => 'sidebar-link']) ?></li>
+                <li class="sidebar-item"><?= Html::a('Spread Out', ['admin/spread'], ['class' => 'sidebar-link']) ?></li>
+                <li class="sidebar-item"><?= Html::a('Result', ['admin/result'], ['class' => 'sidebar-link']) ?></li>
+            </ul>
+		</div>
+	</nav>
 
-    <div class="container">
-        <?= Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) ?>
-        <?= Alert::widget() ?>
-        <?= $content ?>
-    </div>
+    <div class="main">
+		<nav class="navbar navbar-expand navbar-light bg-white">
+            <a class="sidebar-toggle d-flex mr-2"><i class="hamburger align-self-center"></i></a>
+		</nav>
+		<main class="content">
+            <?= $content ?>
+		</main>
+	</div>
 </div>
-
-<footer class="footer">
-    <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
-
-        <p class="pull-right"><?= Yii::powered() ?></p>
-    </div>
-</footer>
 
 <?php $this->endBody() ?>
 </body>
