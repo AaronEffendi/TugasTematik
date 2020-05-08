@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     <?= $form->field($model, 'body', [
                         'template'=>"<h3>{label}</h3>{input}"
-                    ])->textarea(['rows' => 6,'value'=>Url::base(true).'/'.$id.'','placeholder'=>'Enter Message Here.....'])->label('Message') ?>
+                    ])->textarea(['rows' => 6,'value'=>Url::toRoute('site/survey',true).'&id='.$id.'','placeholder'=>'Enter Message Here.....'])->label('Message') ?>
 
                     <div class="form-group">
                         <?= Html::submitButton('Send', ['class' => 'btn btn-primary', 'name' => 'contact-button']) ?>
