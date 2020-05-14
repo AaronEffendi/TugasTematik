@@ -455,4 +455,53 @@ class AdminController extends Controller
             'id' => $id,
         ]);
     }
+
+    // Menampilkan Chart
+    public function actionChart(){
+        // 49 & 51
+        $formQuestionID = 50; // Yang didapat pertama kali ketika admin pencet pertanyaan buat dijadii grafik -> dummy data
+        $formQuestion = FormQuestion::findOne($formQuestionID); // Untuk dapetin keseluruhan informasi formQuestion
+        
+        $formQuestionOption = FormQuestionOption::find()
+                                ->where(['FORMQUESTIONID' => $formQuestionID])->all(); // Untuk dapeti semua formQuestionOption
+
+        // echo "<pre>";
+        // print_r($formQuestionOption) ;
+        // echo "</pre>";
+        
+        // $countArray untuk bikin associative array buat nampung $formOption->FORMQUESTIONVALUE = count
+        // Misal: 
+        //     Pilihan1 => 2,
+        //     Pilihan2 => 3,
+        $countArray = []; 
+        foreach($formQuestionOption as $formOption){
+            $countArray["$formOption->FORMQUESTIONVALUE"] = 0; // Awalnya diinisialisasi 0 semua
+        }
+
+        $keys = array_keys( $countArray ); 
+        for($x = 0; $x < sizeof($keys); $x++ ) { 
+            // Masukin JUMLAH orang yang ngejawab pilihan A ke array A, dst.
+            $countArray[$keys[$x]] = FormAnswerDetail::find()
+                        ->where(['FORMANSWERDETAILVALUE' => $keys[$x]])
+                        ->count();
+        } 
+
+
+        return $this->render('chart', [
+            'formQuestion' => $formQuestion, // Untuk dapetin keseluruhan informasi formQuestion
+            'countArray' => $countArray, // Associative array yang digunakan buat menampung nilai untuk sumbu X => nilai untuk sumbu Y
+            'formQuestionOption' => $formQuestionOption,
+            // Untuk nentui bentuk grafik panggil: $formQuestion->FORMQUESTIONTYPEID
+            // Untuk Legend panggil: $formQuestion->FORMQUESTIONNAME
+
+            // Kalau mau akses associative array di view, pake (perlu didalam php):
+            // $keys = array_keys( $countArray ); 
+            // for($x = 0; $x < sizeof($keys); $x++ ) { 
+            //     echo "key: ". $keys[$x] . ", value: " 
+            //             . $countArray[$keys[$x]] . "\n"; 
+            //     // note:   $keys[$x] untuk generate optionValue (nilai untuk sumbu X)
+            //     //         $countArray[$keys[$x]] untuk generate COUNT (jumlah orang yg pilih) optionValue tsb (nilai untuk sumbu Y)
+            // } 
+        ]);
+    }
 }
