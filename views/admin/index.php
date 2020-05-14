@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ]);
                     },
                     'view' =>  function($url,$model) {
-                        return Html::a('<i class="fas fa-eye"></i>', $url."&isViewAnswer=1", [
+                        return Html::a('<i class="fas fa-eye"></i>', $url, [
                             'title' => Yii::t('app', 'view')
                         ]);
                     },
