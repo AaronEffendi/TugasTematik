@@ -359,7 +359,7 @@ class AdminController extends Controller
         // ]);
 
         $rows = (new \yii\db\Query())
-            ->select(['FORMANSWER.USEREMAIL', 'FORMQUESTION.FORMQUESTIONNAME', 'FORMANSWERDETAIL.FORMANSWERDETAILVALUE'])
+            ->select(['FORMANSWER.USEREMAIL', 'FORMQUESTION.FORMQUESTIONNAME', 'FORMANSWERDETAIL.FORMANSWERDETAILVALUE', 'FORMQUESTION.FORMQUESTIONTYPEID'])
             ->from('FORMANSWER')
             ->innerJoin('FORMANSWERDETAIL', 'FORMANSWERDETAIL.FORMANSWERID = FORMANSWER.FORMANSWERID')
             ->innerJoin('FORMQUESTION', 'FORMANSWERDETAIL.FORMQUESTIONID = FORMQUESTION.FORMQUESTIONID')
@@ -368,24 +368,37 @@ class AdminController extends Controller
 
         $answers = array();
         $formQuestionNames = array();
+        $formQuestionTypeID = array();
+
         foreach($rows as $row){
             if(empty($answers["$row[USEREMAIL]"])) {
                 $answers["$row[USEREMAIL]"] = array();
-                $answers["$row[USEREMAIL]"]["FORMQUESTIONNAME"] = array();
+                // $answers["$row[USEREMAIL]"]["FORMQUESTIONNAME"] = array();
                 $answers["$row[USEREMAIL]"]["FORMANSWERDETAILVALUE"] = array();
             } 
             array_push($formQuestionNames, $row["FORMQUESTIONNAME"]);
+            array_push($formQuestionTypeID, $row["FORMQUESTIONTYPEID"]);
             array_push($answers["$row[USEREMAIL]"]["FORMANSWERDETAILVALUE"], $row["FORMANSWERDETAILVALUE"]);
         }
 
         $formQuestionNames = array_unique($formQuestionNames);
 
+        // echo "<pre>";
+        // print_r($formQuestionTypeID);
+        // echo "</pre>";
+        // echo "<pre>";
+        // print_r($formQuestionNames);
+        // echo "</pre>";
+        // echo "<pre>";
+        // print_r($answers);
+        // echo "</pre>";
         return $this->render('answer', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'answers' => $answers,
             'formQuestionNames' => $formQuestionNames,
             'id' => $id,
+            'formQuestionTypeID' => $formQuestionTypeID,
         ]);
     }
 
