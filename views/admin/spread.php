@@ -1,0 +1,41 @@
+<?php
+
+use yii\helpers\Html;
+use yii\grid\GridView;
+
+/* @var $this yii\web\View */
+/* @var $searchModel app\models\FormListSearch */
+/* @var $dataProvider yii\data\ActiveDataProvider */
+
+$this->title = 'Spread Out';
+$this->params['breadcrumbs'][] = $this->title;
+?>
+<div class="form-list-index">
+
+    <h1><?= Html::encode($this->title) ?></h1>
+
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+
+            'FORMLISTID',
+            'FORMLISTTITLE',
+            'FORMLISTDATE',
+            
+            ['class' => 'yii\grid\ActionColumn',
+            'template' => '{send}',
+                'buttons' => [
+                    'send' =>  function($url,$model) {
+                        return Html::a('<i class="fas fa-envelope"></i>', $url, [
+                            'title' => Yii::t('app', 'send')
+                        ]);
+                    }
+                 ]
+            ],
+        ],
+    ]); ?>
+
+
+</div>

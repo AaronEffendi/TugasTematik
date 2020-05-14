@@ -138,11 +138,9 @@ use yii\jui\DatePicker;
             border-radius: 20px;
             box-shadow: inset 0 0 5px rgba(0,0,0,2);
         }
-
         input:checked[type='checkbox'] {
             background: #03a9f4;
         }
-        
         input[type='checkbox']:before {
             content: '';
             position: absolute;
@@ -156,7 +154,6 @@ use yii\jui\DatePicker;
             box-shadow: 0 2px 5px rgba(0,0,0,2);
             transition: .5s;
         }
-
         input:checked[type='checkbox']:before {
             left: 20px;
         }

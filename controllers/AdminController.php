@@ -13,6 +13,7 @@ use app\models\FormAnswer;
 use app\models\FormAnswerSearch;
 use app\models\FormAnswerDetail;
 use app\models\FormQuestionOption;
+use app\models\SendFrom;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -419,6 +420,39 @@ class AdminController extends Controller
             'dataProvider' => $dataProvider,
             'answers' => $answers,
             'formQuestionNames' => $formQuestionNames,
+        ]);
+    }
+    /**
+     * Lists all FormList models.
+     * @return mixed
+     */
+    public function actionSpread()
+    {
+        $searchModel = new FormListSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('spread', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Displays send page.
+     *
+     * @return Response|string
+     */    
+    public function actionSend($id)
+    {
+        $model = new SendFrom();
+        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
+            Yii::$app->session->setFlash('contactFormSubmitted');
+
+            return $this->refresh();
+        }
+        return $this->render('send', [
+            'model' => $model,
+            'id' => $id,
         ]);
     }
 }
