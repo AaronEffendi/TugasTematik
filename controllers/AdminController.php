@@ -457,7 +457,7 @@ class AdminController extends Controller
     }
 
     // Menampilkan Chart
-    public function actionChart(){
+    public function actionChart($formQuestionID){
         // 49 & 51
         $formQuestionID = 50; // Yang didapat pertama kali ketika admin pencet pertanyaan buat dijadii grafik -> dummy data
         $formQuestion = FormQuestion::findOne($formQuestionID); // Untuk dapetin keseluruhan informasi formQuestion
