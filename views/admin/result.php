@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\FormSearch */
@@ -26,13 +27,20 @@ $this->params['breadcrumbs'][] = $this->title;
             'FORMDATEEND',
 
             ['class' => 'yii\grid\ActionColumn',
+                'template' => '{answer}',
                 'buttons' => [
-                    'view' =>  function($url,$model) {
-                        return Html::a('<i class="fas fa-eye"></i>', $url."&isViewAnswer=1", [
-                            'title' => Yii::t('app', 'view')
+                    'answer' =>  function($url,$model) {
+                        return Html::a('<i class="fas fa-table"></i>', $url, [
+                            'answer' => Yii::t('app', 'inanswerfo')
                         ]);
                     },
-                 ]
+                ],
+                'urlCreator' => function ($action, $model, $key, $index) {
+                    if ($action === 'answer') {
+                        $url = Url::to(['admin/answer', 'id' => $index + 1]); // your own url generation logic
+                        return $url;
+                    }
+                }
             ],
         ],
     ]); ?>
