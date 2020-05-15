@@ -28,7 +28,6 @@ use yii\web\UploadedFile;
 class AdminController extends Controller
 {
     public $layout = 'admin';
-
     /**
      * {@inheritdoc}
      */
@@ -65,11 +64,15 @@ class AdminController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView($id, $isViewAnswer)
     {
-        return $this->render('view', [
-            'modelFormList' => $this->findModel($id),
-        ]);
+        if($isViewAnswer = 0) {
+            return $this->render('view', [
+                'modelFormList' => $this->findModel($id),
+            ]);
+        } else if ($isViewAnswer = 1) {
+            $this->redirect("?r=admin/answer&id=$id");
+        }
     }
 
     /**
@@ -152,7 +155,7 @@ class AdminController extends Controller
                     }
 
                     if ($flag) {
-                        return $this->redirect(['view', 'id' => $modelFormList->FORMLISTID]);
+                        return $this->redirect(['view', 'id' => $modelFormList->FORMLISTID, 'isViewAnswer' => 0]);
                     } else {
                         $transaction->rollBack();
                     }
@@ -283,7 +286,7 @@ class AdminController extends Controller
 
                     if ($flag) {
                         $transaction->commit();
-                        return $this->redirect(['view', 'id' => $modelFormList->FORMLISTID]);
+                        return $this->redirect(['view', 'id' => $modelFormList->FORMLISTID, 'isViewAnswer' => 0]);
                     } else {
                         $transaction->rollBack();
                     }
@@ -335,20 +338,8 @@ class AdminController extends Controller
 
     public function actionResult()
     {
-        // $searchModel = new FormSearch();
-        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $searchModel = new Form();
-        $dataProvider = new ActiveDataProvider([
-            'query' => $searchModel::find(),
-            'pagination' => [
-                'pageSize' => 10,
-            ],
-            'sort' => [
-                'defaultOrder' => [
-                    'FORMID' => SORT_ASC, 
-                ]
-            ],
-        ]);
+        $searchModel = new FormSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('result', [
             'searchModel' => $searchModel,
@@ -361,47 +352,63 @@ class AdminController extends Controller
         $searchModel = new FormAnswerSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        // $dataProvider = new ActiveDataProvider([
+        //     'query' => $modelFormAnswer::find(),
+        //     'pagination' => [
+        //         'pageSize' => 20,
+        //     ],
+        // ]);
+
+        $formListID = (new \yii\db\Query())
+        ->select(['FORM.FORMLISTID'])
+        ->from('FORMANSWER')
+        ->innerJoin('FORM', 'FORM.FORMID = FORMANSWER.FORMID')
+        ->where(['FORMANSWER.FORMID' => $id])->one()["FORMLISTID"];
+
+        
+        $formQuestions = (new \yii\db\Query())
+        ->select(['FORMQUESTIONNAME', 'FORMQUESTIONTYPEID', 'FORMQUESTIONID'])
+        ->from('FORMLIST')
+        ->innerJoin('FORMQUESTION', 'FORMQUESTION.FORMLISTID = FORMLIST.FORMLISTID')
+        ->where(['FORMQUESTION.FORMLISTID' => $formListID])->all();
+        
+
         $rows = (new \yii\db\Query())
-            ->select(['FORMANSWER.USEREMAIL', 'FORMQUESTION.FORMQUESTIONNAME', 'FORMANSWERDETAIL.FORMANSWERDETAILVALUE', 'FORMQUESTION.FORMQUESTIONTYPEID'])
+            ->select(['FORMANSWER.USEREMAIL', 'FORMQUESTIONNAME', 'FORMANSWERDETAIL.FORMANSWERDETAILVALUE'])
             ->from('FORMANSWER')
             ->innerJoin('FORMANSWERDETAIL', 'FORMANSWERDETAIL.FORMANSWERID = FORMANSWER.FORMANSWERID')
             ->innerJoin('FORMQUESTION', 'FORMANSWERDETAIL.FORMQUESTIONID = FORMQUESTION.FORMQUESTIONID')
             ->where(['FORMANSWER.FORMID' => $id])
+            ->orderBy('FORMANSWERDETAIL.FORMQUESTIONID')
             ->all();
 
         $answers = array();
-        $formQuestionNames = array();
-        $formQuestionTypeID = array();
+        $formQuestionData = array();
 
         foreach($rows as $row){
             if(empty($answers["$row[USEREMAIL]"])) {
                 $answers["$row[USEREMAIL]"] = array();
                 // $answers["$row[USEREMAIL]"]["FORMQUESTIONNAME"] = array();
-                $answers["$row[USEREMAIL]"]["FORMANSWERDETAILVALUE"] = array();
+                // $answers["$row[USEREMAIL]"]["FORMANSWERDETAILVALUE"] = array();
             } 
-            array_push($formQuestionNames, $row["FORMQUESTIONNAME"]);
-            array_push($formQuestionTypeID, $row["FORMQUESTIONTYPEID"]);
-            array_push($answers["$row[USEREMAIL]"]["FORMANSWERDETAILVALUE"], $row["FORMANSWERDETAILVALUE"]);
+            $answers["$row[USEREMAIL]"]["$row[FORMQUESTIONNAME]"] = $row["FORMANSWERDETAILVALUE"];
+            // array_push($answers["$row[USEREMAIL]"]["FORMANSWERDETAILVALUE"], $row["FORMANSWERDETAILVALUE"]);
         }
 
-        $formQuestionNames = array_unique($formQuestionNames);
+        foreach($formQuestions as $formQuestion){
+            $formQuestionData["$formQuestion[FORMQUESTIONID]"] = array();
+            $formQuestionData["$formQuestion[FORMQUESTIONID]"]["$formQuestion[FORMQUESTIONNAME]"] = $formQuestion["FORMQUESTIONTYPEID"];
+            
+        }
 
-        // echo "<pre>";
-        // print_r($formQuestionTypeID);
-        // echo "</pre>";
-        // echo "<pre>";
-        // print_r($formQuestionNames);
-        // echo "</pre>";
-        // echo "<pre>";
-        // print_r($answers);
-        // echo "</pre>";
+        // $formQuestionNames = array_unique($formQuestionNames);
+
         return $this->render('answer', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'answers' => $answers,
-            'formQuestionNames' => $formQuestionNames,
+            'formQuestionData' => $formQuestionData,
             'id' => $id,
-            'formQuestionTypeID' => $formQuestionTypeID,
         ]);
     }
 
@@ -438,7 +445,6 @@ class AdminController extends Controller
             'formQuestionNames' => $formQuestionNames,
         ]);
     }
-    
     /**
      * Lists all FormList models.
      * @return mixed
@@ -475,8 +481,6 @@ class AdminController extends Controller
 
     // Menampilkan Chart
     public function actionChart($formQuestionID){
-        // 49 & 51
-        $formQuestionID = 50; // Yang didapat pertama kali ketika admin pencet pertanyaan buat dijadii grafik -> dummy data
         $formQuestion = FormQuestion::findOne($formQuestionID); // Untuk dapetin keseluruhan informasi formQuestion
         
         $formQuestionOption = FormQuestionOption::find()
@@ -502,7 +506,6 @@ class AdminController extends Controller
                         ->where(['FORMANSWERDETAILVALUE' => $keys[$x]])
                         ->count();
         } 
-
 
         return $this->render('chart', [
             'formQuestion' => $formQuestion, // Untuk dapetin keseluruhan informasi formQuestion

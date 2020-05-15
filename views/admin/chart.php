@@ -8,6 +8,7 @@ use yii\helpers\ArrayHelper;
     $bgColor = array();
     $bdColor = array();
     $datasets = array();
+    $clientOptions = array();
 
     $backgroundColor = array(
         "rgba(255,0,0,0.2)", "rgba(0,255,0,0.2)", "rgba(0,0,255,0.2)", 
@@ -45,7 +46,7 @@ use yii\helpers\ArrayHelper;
         //         $countArray[$keys[$x]] untuk generate COUNT (jumlah orang yg pilih) optionValue tsb (nilai untuk sumbu Y)
     }
 
-    if($formQuestion->FORMQUESTIONTYPEID == 3){ // Multiple choice - Pie
+    if($formQuestion->FORMQUESTIONTYPEID == 3 || $formQuestion->FORMQUESTIONTYPEID == 5){ // Multiple choice - Pie
         $type = 'pie';
         $datasets = null;
         $datasets[0] = [
@@ -61,28 +62,78 @@ use yii\helpers\ArrayHelper;
     }
     elseif($formQuestion->FORMQUESTIONTYPEID == 4){ // Checkbox - Horizontal bar
         $type = 'horizontalBar';
+        $datasets = null;
+        $datasets[0] = [
+            'label' => "",
+            'backgroundColor' => $bgColor,
+            'borderColor' => $bdColor,
+            'pointBackgroundColor' => "rgba(179,181,198,1)",
+            'pointBorderColor' => "#fff",
+            'pointHoverBackgroundColor' => "#fff",
+            'pointHoverBorderColor' => "rgba(179,181,198,1)",
+            'data' => $data
+        ];
+        $clientOptions = [
+            'scales' => [
+                'xAxes' => [[
+                    'ticks' => [
+                        'beginAtZero' => 'true', 
+                        # Sumber: 
+                        # https://github.com/2amigos/yii2-chartjs-widget/issues/22
+                        # https://github.com/2amigos/yii2-chartjs-widget/issues/32
+                    ]
+                ]],
+            ],
+        ];
     }
     elseif($formQuestion->FORMQUESTIONTYPEID == 7){ // Linear Scale - Vertical bar
         $type = 'bar';
+        $datasets = null;
+        $datasets[0] = [
+            'label' => "",
+            'backgroundColor' => $bgColor,
+            'borderColor' => $bdColor,
+            'pointBackgroundColor' => "rgba(179,181,198,1)",
+            'pointBorderColor' => "#fff",
+            'pointHoverBackgroundColor' => "#fff",
+            'pointHoverBorderColor' => "rgba(179,181,198,1)",
+            'data' => $data
+        ];
+        $clientOptions = [
+            'scales' => [
+                'yAxes' => [[
+                    'ticks' => [
+                        'beginAtZero' => 'true', 
+                        # Sumber: 
+                        # https://github.com/2amigos/yii2-chartjs-widget/issues/22
+                        # https://github.com/2amigos/yii2-chartjs-widget/issues/32
+                    ]
+                ]],
+            ],
+        ];
     }
     else{ // Trend
         $type = 'line';
     }
-            
-    echo $type;
 
-    echo "<pre>";
-    echo "formQuestion <br>";
-    print_r($formQuestion);
-    echo "formQuestionOption <br>";
-    print_r($formQuestionOption);
-    echo "labels <br>";
-    print_r($labels);
-    echo "data <br>";
-    print_r($data);
-    echo "datasets <br>";
-    print_r($datasets);
-    echo "</pre>";
+    ///////////////////////////////////
+    //          DEBUGGING            //
+    ///////////////////////////////////
+    //
+    // echo "<pre>";
+    // echo "formQuestion <br>";
+    // print_r($formQuestion);
+    // echo "formQuestionOption <br>";
+    // print_r($formQuestionOption);
+    // echo "labels <br>";
+    // print_r($labels);
+    // echo "data <br>";
+    // print_r($data);
+    // echo "datasets <br>";
+    // print_r($datasets);
+    // echo "</pre>";
+    //
+    ///////////////////////////////////
 ?>
 
 <!-- Sumber:
@@ -91,27 +142,14 @@ use yii\helpers\ArrayHelper;
 
     $chart = ChartJs::widget([
         'type' => $type,
-        'options' => [
-            'height' => 200,
-            'width' => 200,
-        ],
+        // 'options' => [
+        //     'height' => 200,
+        //     'width' => 200,
+        // ],
         'data' => [
             'labels' => $labels,
             'datasets' => $datasets,
-            // 'labels' => ["January", "February", "March", "April", "May", "June", "July"],
-            // 'datasets' => [
-            //     [
-            //         'label' => $labels,
-            //         'backgroundColor' => "rgba(179,181,198,0.2)",
-            //         'borderColor' => "rgba(179,181,198,1)",
-            //         'pointBackgroundColor' => "rgba(179,181,198,1)",
-            //         'pointBorderColor' => "#fff",
-            //         'pointHoverBackgroundColor' => "#fff",
-            //         'pointHoverBorderColor' => "rgba(179,181,198,1)",
-            //         // 'data' => [65, 59, 90, 81, 56, 55, 40]
-            //         'data' => $data
-            //     ]
-            // ]
-        ]
+        ],
+        'clientOptions' =>  $clientOptions,
     ]);
 ?>
