@@ -27,6 +27,7 @@ use yii\web\UploadedFile;
  */
 class AdminController extends Controller
 {
+    public $layout = 'admin';
     /**
      * {@inheritdoc}
      */
@@ -358,33 +359,55 @@ class AdminController extends Controller
         //     ],
         // ]);
 
+        $formListID = (new \yii\db\Query())
+        ->select(['FORM.FORMLISTID'])
+        ->from('FORMANSWER')
+        ->innerJoin('FORM', 'FORM.FORMID = FORMANSWER.FORMID')
+        ->where(['FORMANSWER.FORMID' => $id])->one()["FORMLISTID"];
+
+        
+        $formQuestions = (new \yii\db\Query())
+        ->select(['FORMQUESTIONNAME', 'FORMQUESTIONTYPEID', 'FORMQUESTIONID'])
+        ->from('FORMLIST')
+        ->innerJoin('FORMQUESTION', 'FORMQUESTION.FORMLISTID = FORMLIST.FORMLISTID')
+        ->where(['FORMQUESTION.FORMLISTID' => $formListID])->all();
+        
+
         $rows = (new \yii\db\Query())
-            ->select(['FORMANSWER.USEREMAIL', 'FORMQUESTION.FORMQUESTIONNAME', 'FORMANSWERDETAIL.FORMANSWERDETAILVALUE'])
+            ->select(['FORMANSWER.USEREMAIL', 'FORMQUESTIONNAME', 'FORMANSWERDETAIL.FORMANSWERDETAILVALUE'])
             ->from('FORMANSWER')
             ->innerJoin('FORMANSWERDETAIL', 'FORMANSWERDETAIL.FORMANSWERID = FORMANSWER.FORMANSWERID')
             ->innerJoin('FORMQUESTION', 'FORMANSWERDETAIL.FORMQUESTIONID = FORMQUESTION.FORMQUESTIONID')
             ->where(['FORMANSWER.FORMID' => $id])
+            ->orderBy('FORMANSWERDETAIL.FORMQUESTIONID')
             ->all();
 
         $answers = array();
-        $formQuestionNames = array();
+        $formQuestionData = array();
+
         foreach($rows as $row){
             if(empty($answers["$row[USEREMAIL]"])) {
                 $answers["$row[USEREMAIL]"] = array();
-                $answers["$row[USEREMAIL]"]["FORMQUESTIONNAME"] = array();
-                $answers["$row[USEREMAIL]"]["FORMANSWERDETAILVALUE"] = array();
+                // $answers["$row[USEREMAIL]"]["FORMQUESTIONNAME"] = array();
+                // $answers["$row[USEREMAIL]"]["FORMANSWERDETAILVALUE"] = array();
             } 
-            array_push($formQuestionNames, $row["FORMQUESTIONNAME"]);
-            array_push($answers["$row[USEREMAIL]"]["FORMANSWERDETAILVALUE"], $row["FORMANSWERDETAILVALUE"]);
+            $answers["$row[USEREMAIL]"]["$row[FORMQUESTIONNAME]"] = $row["FORMANSWERDETAILVALUE"];
+            // array_push($answers["$row[USEREMAIL]"]["FORMANSWERDETAILVALUE"], $row["FORMANSWERDETAILVALUE"]);
         }
 
-        $formQuestionNames = array_unique($formQuestionNames);
+        foreach($formQuestions as $formQuestion){
+            $formQuestionData["$formQuestion[FORMQUESTIONID]"] = array();
+            $formQuestionData["$formQuestion[FORMQUESTIONID]"]["$formQuestion[FORMQUESTIONNAME]"] = $formQuestion["FORMQUESTIONTYPEID"];
+            
+        }
+
+        // $formQuestionNames = array_unique($formQuestionNames);
 
         return $this->render('answer', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'answers' => $answers,
-            'formQuestionNames' => $formQuestionNames,
+            'formQuestionData' => $formQuestionData,
             'id' => $id,
         ]);
     }
@@ -458,8 +481,6 @@ class AdminController extends Controller
 
     // Menampilkan Chart
     public function actionChart($formQuestionID){
-        // 49 & 51
-        $formQuestionID = 50; // Yang didapat pertama kali ketika admin pencet pertanyaan buat dijadii grafik -> dummy data
         $formQuestion = FormQuestion::findOne($formQuestionID); // Untuk dapetin keseluruhan informasi formQuestion
         
         $formQuestionOption = FormQuestionOption::find()
@@ -485,7 +506,6 @@ class AdminController extends Controller
                         ->where(['FORMANSWERDETAILVALUE' => $keys[$x]])
                         ->count();
         } 
-
 
         return $this->render('chart', [
             'formQuestion' => $formQuestion, // Untuk dapetin keseluruhan informasi formQuestion

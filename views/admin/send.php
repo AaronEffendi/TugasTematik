@@ -14,6 +14,17 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-contact">
     <h1><?= Html::encode($this->title) ?></h1>
+    <?php if (Yii::$app->session->hasFlash('contactFormSubmitted')): ?>
+
+    <?php ?>
+    <h5>
+        The email was successfully sent.
+        <br>
+        <br>
+    </h5>
+    <?= Html::a('BACK', ['admin/spread'], ['class'=>'btn btn-primary']) ?>
+    <?php else: ?>
+
     <div class="row">
         <div class="col-md-12">
 
@@ -44,11 +55,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     ])->textarea(['rows' => 6,'value'=>Url::toRoute('site/survey',true).'&id='.$id.'','placeholder'=>'Enter Message Here.....'])->label('Message') ?>
 
                     <div class="form-group">
-                        <?= Html::submitButton('Send', ['class' => 'btn btn-primary', 'name' => 'contact-button']) ?>
+                        <?= Html::submitButton('Send', ['class' => 'btn btn-success', 'name' => 'contact-button']) ?>
+                        <?= Html::a('Cancel', ['admin/spread'], ['class'=>'btn btn-primary']) ?>
                     </div>
                 </div>
             <?php ActiveForm::end(); ?>
 
+            </div>
         </div>
-    </div>
+    
+    <?php endif; ?>
 </div>

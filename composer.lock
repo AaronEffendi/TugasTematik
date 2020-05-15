@@ -69,12 +69,12 @@
             "version": "v2.9.3",
             "source": {
                 "type": "git",
-                "url": "git@github.com:nnnick/Chart.js.git",
+                "url": "https://github.com/chartjs/Chart.js.git",
                 "reference": "06f73dc3590084b2c464bf08189c7aee2b6b92d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nnnick/Chart.js/zipball/06f73dc3590084b2c464bf08189c7aee2b6b92d2",
+                "url": "https://api.github.com/repos/chartjs/Chart.js/zipball/06f73dc3590084b2c464bf08189c7aee2b6b92d2",
                 "reference": "06f73dc3590084b2c464bf08189c7aee2b6b92d2"
             },
             "type": "bower-asset",

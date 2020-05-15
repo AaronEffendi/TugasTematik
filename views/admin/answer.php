@@ -26,8 +26,20 @@ $this->params['breadcrumbs'][] = $this->title;
             <thead>
                 <tr>
                     <th>E-Mail Address</th>
-                    <?php foreach ($formQuestionNames as $indexFormQuestionName => $formQuestionName): ?>
-                        <th><?= $formQuestionName ?></th>
+                    <?php foreach ($formQuestionData as $formQuestionID => $formQuestionName): ?>
+                        <?php foreach($formQuestionName as $formQuestionName => $formQuestionTypeId): ?>
+                            <th>
+                                <?php
+                                    if($formQuestionTypeId == 3 || $formQuestionTypeId == 4 || $formQuestionTypeId == 5 || $formQuestionTypeId == 7){
+                                        echo "$formQuestionName ";
+                                        echo Html::a('<i class="fa fa-pie-chart"></i>', Url::to(['admin/chart', 'formQuestionID' => $formQuestionID]));
+                                    }
+                                    else{
+                                        echo $formQuestionName;
+                                    }
+                                ?>
+                            </th>
+                        <?php endforeach; ?>
                     <?php endforeach; ?>
                 </tr>
             </thead>
@@ -36,9 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <tr>
                     <td><?= $indexAnswer ?></td>
                     <?php foreach ($answer as $indexAnswerDetail => $answerDetail): ?>
-                        <?php foreach ($answerDetail as $indexAnswerDetailValue => $answerDetailValue): ?>
-                            <td><?= $answerDetailValue ?></td>
-                        <?php endforeach; ?>
+                            <td><?= $answerDetail ?></td>
                     <?php endforeach; ?>
                 </tr>
             <?php endforeach; ?>
