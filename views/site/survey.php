@@ -1,8 +1,9 @@
 <?php
 
 /* @var $this yii\web\View */
+use yii\helpers\Html;
 use yii\helpers\Url;
-$this->title = 'UMN Survey';
+$this->title = 'UMN SURVEY';
 ?>
 
 <main>
@@ -20,50 +21,19 @@ $this->title = 'UMN Survey';
         </div>
         <div class="container-fluid p-0">
             <div class="row ">
-                <div class="col-lg-3 col-md-4">
-                    <div class="single-visited mb-30">
-                        <div class="visited-img">
-                            <img src="assets/img/visit/visit_1.jpg" alt="">
-                        </div>
-                        <div class="visited-cap">
-                            <h3><a href="<?= Url::toRoute('site/form')?>">Satisfaction Survey</a></h3>
-                            <!-- <p>Email Marketing</p> -->
-                        </div>
-                    </div>
-                </div> 
+                <?php foreach($data as $formlist) :?>
                     <div class="col-lg-3 col-md-4">
-                    <div class="single-visited mb-30">
-                        <div class="visited-img">
-                            <img src="assets/img/visit/visit_2.jpg" alt="">
+                        <div class="single-visited mb-30">
+                            <div class="visited-img">
+                                <img src="assets/img/visit/visit_1.jpg" alt="">
+                            </div>
+                            <div class="visited-cap">
+                                <h3><a href="<?= Url::toRoute(['site/form', 'formlistid' => $formlist->FORMLISTID])?>"><?= $formlist->FORMLISTTITLE?></a></h3>
+                                <!-- <p>Email Marketing</p> -->
+                            </div>
                         </div>
-                        <div class="visited-cap">
-                            <h3><a href="#">Facilities Survey</a></h3>
-                            <!-- <p>Email Marketing</p> -->
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4">
-                    <div class="single-visited mb-30">
-                        <div class="visited-img">
-                            <img src="assets/img/visit/visit_3.jpg" alt="">
-                        </div>
-                        <div class="visited-cap">
-                            <h3><a href="#">Libary Survey</a></h3>
-                            <!-- <p>Email Marketing</p> -->
-                        </div>
-                    </div>
-                </div> 
-                <div class="col-lg-3 col-md-4">
-                    <div class="single-visited mb-30">
-                        <div class="visited-img">
-                            <img src="assets/img/visit/visit_4.jpg" alt="">
-                        </div>
-                        <div class="visited-cap">
-                            <h3><a href="#">Literature Survey</a></h3>
-                            <!-- <p>Email Marketing</p> -->
-                        </div>
-                    </div>
-                </div>
+                    </div> 
+                <?php endforeach;?>
             </div>
         </div>
     </div>
