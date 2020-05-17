@@ -34,8 +34,8 @@ class Form extends \yii\db\ActiveRecord
     {
         return [
             [['FORMID', 'FORMLISTID'], 'number'],
-            [['FORMLISTID', 'FORMDATESTART', 'FORMDATEEND'], 'required'],
-            [['FORMDATESTART', 'FORMDATEEND'], 'string', 'max' => 7],
+            [['FORMLISTID'], 'required'],
+            // [['FORMDATESTART', 'FORMDATEEND'], 'string', 'max' => 7],
             [['FORMID'], 'unique'],
         ];
     }

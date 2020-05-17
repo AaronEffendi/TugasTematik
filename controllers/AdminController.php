@@ -83,6 +83,7 @@ class AdminController extends Controller
     public function actionCreate()
     {
         $modelFormList = new FormList;
+        $modelForm = new Form;
         $modelFormList->FORMLISTDATE = date('d-M-y');
         $modelsFormQuestion = [new FormQuestion];
         $modelsFormQuestionOption = [[new FormQuestionOption]];
@@ -123,6 +124,19 @@ class AdminController extends Controller
                 $modelFormList->save(false);
                 $transaction->commit();
                 $modelFormList->FORMLISTID = FormList::find()->select('FORMLISTID')->max('FORMLISTID');
+
+                $transaction = Yii::$app->db->beginTransaction();
+                $modelForm->FORMLISTID = $modelFormList->FORMLISTID;
+                $modelForm->FORMDATESTART = date('d-M-y');;
+                $modelForm->FORMDATEEND = date('d-M-y');
+                $modelForm->USERJOBID = 3;
+                $modelForm->save();
+                $transaction->commit();
+                
+                echo "<pre>";
+                print_r($modelForm);
+                print_r($modelFormList);
+                echo "</pre>";
                 
                 try {
                     if ($flag = $modelFormList->save(false)) {
@@ -363,8 +377,12 @@ class AdminController extends Controller
         ->select(['FORM.FORMLISTID'])
         ->from('FORMANSWER')
         ->innerJoin('FORM', 'FORM.FORMID = FORMANSWER.FORMID')
-        ->where(['FORMANSWER.FORMID' => $id])->one()["FORMLISTID"];
+        ->where(['FORMANSWER.FORMID' => $id])->one();
 
+        // $formListID = $formListID["FORMLISTID"];
+        // echo "<pre>";
+        // print_r($formListID);
+        // echo "</pre>";
         
         $formQuestions = (new \yii\db\Query())
         ->select(['FORMQUESTIONNAME', 'FORMQUESTIONTYPEID', 'FORMQUESTIONID'])
