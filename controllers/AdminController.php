@@ -58,6 +58,13 @@ class AdminController extends Controller
         ]);
     }
 
+    public function actionLogout()
+    {
+        Yii::$app->user->logout();
+
+        return $this->goHome();
+    }
+
     /**
      * Displays a single FormList model.
      * @param string $id
