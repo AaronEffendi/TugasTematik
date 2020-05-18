@@ -59,21 +59,24 @@ class AdminController extends Controller
         ]);
     }
 
+    public function actionLogout()
+    {
+        Yii::$app->user->logout();
+
+        return $this->goHome();
+    }
+
     /**
      * Displays a single FormList model.
      * @param string $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id, $isViewAnswer)
+    public function actionView($id)
     {
-        if($isViewAnswer = 0) {
-            return $this->render('view', [
-                'modelFormList' => $this->findModel($id),
-            ]);
-        } else if ($isViewAnswer = 1) {
-            $this->redirect("?r=admin/answer&id=$id");
-        }
+        return $this->render('view', [
+            'modelFormList' => $this->findModel($id),
+        ]);
     }
 
     /**
@@ -170,7 +173,7 @@ class AdminController extends Controller
                     }
 
                     if ($flag) {
-                        return $this->redirect(['view', 'id' => $modelFormList->FORMLISTID, 'isViewAnswer' => 0]);
+                        return $this->redirect(['view', 'id' => $modelFormList->FORMLISTID]);
                     } else {
                         $transaction->rollBack();
                     }
@@ -301,7 +304,7 @@ class AdminController extends Controller
 
                     if ($flag) {
                         $transaction->commit();
-                        return $this->redirect(['view', 'id' => $modelFormList->FORMLISTID, 'isViewAnswer' => 0]);
+                        return $this->redirect(['view', 'id' => $modelFormList->FORMLISTID]);
                     } else {
                         $transaction->rollBack();
                     }
