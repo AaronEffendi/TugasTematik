@@ -5,6 +5,7 @@ use yii\helpers\ArrayHelper;
 use yii\bootstrap4\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use app\models\UserJob;
 
     $this->title = $formQuestion->FORMQUESTIONNAME;
     $labels = array();
@@ -147,23 +148,32 @@ use yii\helpers\Url;
     
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?php $form = ActiveForm::begin(['id' => 'form-list', 'options' => ['enctype' => 'multipart/form-data']]); ?>
-        <?= $form->field($modelFormPublish, 'item_id')->widget(\yii\bootstrap\ToggleButtonGroup::classname(), [
-            // configure additional widget properties here
-        ]) ?>
+    <?php $form = ActiveForm::begin(['id' => 'chart', 'options' => ['enctype' => 'multipart/form-data']]); ?>
+        <?php 
+            echo "<br><strong>Choose at least one of the option: </strong><br><br>";
+            // Kalau data sudah ada di DB, cek apakah checkbox di checked atau ga. Kalau iya, default di checked, vice versa.
+            if($isPublished != NULL){
+                if($isPublished->STAFF == 1)
+                    $modelFormPublish->STAFF = 1;
+                if($isPublished->LECTURER == 1)
+                    $modelFormPublish->LECTURER = 1;
+                if($isPublished->STUDENT == 1)
+                    $modelFormPublish->STUDENT = 1;
+                if($isPublished->PUBLICS == 1)
+                    $modelFormPublish->PUBLICS = 1;
+            }
+        ?>
+        <?= $form->field($modelFormPublish, 'STAFF')->checkbox() ?>
+        <?= $form->field($modelFormPublish, 'LECTURER')->checkbox() ?>
+        <?= $form->field($modelFormPublish, 'STUDENT')->checkbox() ?>
+        <?= $form->field($modelFormPublish, 'PUBLICS')->checkbox() ?>
+        <?= $form->field($modelFormPublish, 'FORMQUESTIONID')->hiddenInput(['value'=> $formQuestion->FORMQUESTIONID])->label(false) ?>
+        <?= $form->field($modelFormPublish, 'FORMID')->hiddenInput(['value'=> $formID])->label(false) ?>
+        
+        <?= Html::submitButton('Publish Chart', ['class' => 'btn btn-primary']) ?>
     <?php ActiveForm::end(); ?>
 
-    <?= Html::a('Publish Chart', 
-        ['/admin/publish'], [
-        'data-method' => 'POST',
-        'data-params' => [
-            'formQuestionID' => $formQuestion->FORMQUESTIONID,
-            'formID' => $formID,
-        ],
-]) ?>
-
     <?=
-
         $chart = ChartJs::widget([
             'type' => $type,
             // 'options' => [

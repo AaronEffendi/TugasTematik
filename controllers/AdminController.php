@@ -508,9 +508,45 @@ class AdminController extends Controller
         
         $formQuestionOption = FormQuestionOption::find()
                                 ->where(['FORMQUESTIONID' => $formQuestionID])->all(); // Untuk dapeti semua formQuestionOption
+                                
+        $isPublished = FormPublish::find()   
+        ->where([
+            'FORMQUESTIONID' => $formQuestionID,
+            'FORMID' => $formID])->one();
 
         if ($modelFormPublish->load(Yii::$app->request->post())){
-            echo "YES";
+            if(!empty($modelFormPublish->LECTURER) || !empty($modelFormPublish->PUBLICS) || !empty($modelFormPublish->STAFF) || !empty($modelFormPublish->STUDENT)){
+                if($isPublished == NULL){
+                    $transaction = Yii::$app->db->beginTransaction();
+                    $modelFormPublish->save();
+                    $transaction->commit();
+                }
+                else{                    
+                    $transaction = Yii::$app->db->beginTransaction();
+                    Yii::$app->db->createCommand()->update('FORMPUBLISH', 
+                    [
+                        'LECTURER' => $modelFormPublish->LECTURER,
+                        'PUBLICS' => $modelFormPublish->PUBLICS,
+                        'STAFF' => $modelFormPublish->STAFF,
+                        'STUDENT' => $modelFormPublish->STUDENT,
+
+                    ], 
+                    [
+                        'FORMID' => $modelFormPublish->FORMID,
+                        'FORMQUESTIONID' => $modelFormPublish->FORMQUESTIONID,
+                    ],)->execute();
+                    $transaction->commit();
+                }
+
+                // Pindah controller
+                // return Yii::$app->runAction('site/index');
+                // return Url::to(['site/index']);
+                // return $this->redirect(['site/index']);
+                
+            }
+            else{
+                echo "<script>alert('Please select at least one of the option')</script>";
+            }
         }
 
         // echo "<pre>";
@@ -540,6 +576,7 @@ class AdminController extends Controller
             'formQuestionOption' => $formQuestionOption,
             'formID' => $formID,
             'modelFormPublish' => $modelFormPublish,
+            'isPublished' => $isPublished,
             // Untuk nentui bentuk grafik panggil: $formQuestion->FORMQUESTIONTYPEID
             // Untuk Legend panggil: $formQuestion->FORMQUESTIONNAME
 
@@ -552,14 +589,5 @@ class AdminController extends Controller
             //     //         $countArray[$keys[$x]] untuk generate COUNT (jumlah orang yg pilih) optionValue tsb (nilai untuk sumbu Y)
             // } 
         ]);
-    }
-
-    public function actionPublish(){
-        $formQuestionID = Yii::$app->request->post('formQuestionID');
-        $formID = Yii::$app->request->post('formID');
-
-        $modelFormPublish = new FormPublish();    
-        $modelFormPublish->FORMQUESTIONID = $formQuestionID;
-        $modelFormPublish->FORMID = $formID;
     }
 }
