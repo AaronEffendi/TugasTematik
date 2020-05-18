@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'buttons' => [
                     'answer' =>  function($url,$model) {
                         return Html::a('<i class="fas fa-table"></i>', $url, [
-                            'answer' => Yii::t('app', 'inanswerfo')
+                            'answer' => Yii::t('app', 'answer')
                         ]);
                     },
                 ],
