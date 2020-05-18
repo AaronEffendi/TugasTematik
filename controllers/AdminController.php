@@ -13,6 +13,7 @@ use app\models\FormAnswer;
 use app\models\FormAnswerSearch;
 use app\models\FormAnswerDetail;
 use app\models\FormQuestionOption;
+use app\models\FormPublish;
 use app\models\SendFrom;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -58,21 +59,24 @@ class AdminController extends Controller
         ]);
     }
 
+    public function actionLogout()
+    {
+        Yii::$app->user->logout();
+
+        return $this->goHome();
+    }
+
     /**
      * Displays a single FormList model.
      * @param string $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id, $isViewAnswer)
+    public function actionView($id)
     {
-        if($isViewAnswer = 0) {
-            return $this->render('view', [
-                'modelFormList' => $this->findModel($id),
-            ]);
-        } else if ($isViewAnswer = 1) {
-            $this->redirect("?r=admin/answer&id=$id");
-        }
+        return $this->render('view', [
+            'modelFormList' => $this->findModel($id),
+        ]);
     }
 
     /**
@@ -127,7 +131,7 @@ class AdminController extends Controller
 
                 $transaction = Yii::$app->db->beginTransaction();
                 $modelForm->FORMLISTID = $modelFormList->FORMLISTID;
-                $modelForm->FORMDATESTART = date('d-M-y');;
+                $modelForm->FORMDATESTART = date('d-M-y');
                 $modelForm->FORMDATEEND = date('d-M-y');
                 $modelForm->USERJOBID = 3;
                 $modelForm->save();
@@ -169,7 +173,7 @@ class AdminController extends Controller
                     }
 
                     if ($flag) {
-                        return $this->redirect(['view', 'id' => $modelFormList->FORMLISTID, 'isViewAnswer' => 0]);
+                        return $this->redirect(['view', 'id' => $modelFormList->FORMLISTID]);
                     } else {
                         $transaction->rollBack();
                     }
@@ -300,7 +304,7 @@ class AdminController extends Controller
 
                     if ($flag) {
                         $transaction->commit();
-                        return $this->redirect(['view', 'id' => $modelFormList->FORMLISTID, 'isViewAnswer' => 0]);
+                        return $this->redirect(['view', 'id' => $modelFormList->FORMLISTID]);
                     } else {
                         $transaction->rollBack();
                     }
@@ -498,11 +502,16 @@ class AdminController extends Controller
     }
 
     // Menampilkan Chart
-    public function actionChart($formQuestionID){
+    public function actionChart($formQuestionID, $formID){
+        $modelFormPublish = new FormPublish(); 
         $formQuestion = FormQuestion::findOne($formQuestionID); // Untuk dapetin keseluruhan informasi formQuestion
         
         $formQuestionOption = FormQuestionOption::find()
                                 ->where(['FORMQUESTIONID' => $formQuestionID])->all(); // Untuk dapeti semua formQuestionOption
+
+        if ($modelFormPublish->load(Yii::$app->request->post())){
+            echo "YES";
+        }
 
         // echo "<pre>";
         // print_r($formQuestionOption) ;
@@ -529,6 +538,8 @@ class AdminController extends Controller
             'formQuestion' => $formQuestion, // Untuk dapetin keseluruhan informasi formQuestion
             'countArray' => $countArray, // Associative array yang digunakan buat menampung nilai untuk sumbu X => nilai untuk sumbu Y
             'formQuestionOption' => $formQuestionOption,
+            'formID' => $formID,
+            'modelFormPublish' => $modelFormPublish,
             // Untuk nentui bentuk grafik panggil: $formQuestion->FORMQUESTIONTYPEID
             // Untuk Legend panggil: $formQuestion->FORMQUESTIONNAME
 
@@ -541,5 +552,14 @@ class AdminController extends Controller
             //     //         $countArray[$keys[$x]] untuk generate COUNT (jumlah orang yg pilih) optionValue tsb (nilai untuk sumbu Y)
             // } 
         ]);
+    }
+
+    public function actionPublish(){
+        $formQuestionID = Yii::$app->request->post('formQuestionID');
+        $formID = Yii::$app->request->post('formID');
+
+        $modelFormPublish = new FormPublish();    
+        $modelFormPublish->FORMQUESTIONID = $formQuestionID;
+        $modelFormPublish->FORMID = $formID;
     }
 }

@@ -2,7 +2,11 @@
 
 use dosamigos\chartjs\ChartJs;
 use yii\helpers\ArrayHelper;
-    
+use yii\bootstrap4\ActiveForm;
+use yii\helpers\Html;
+use yii\helpers\Url;
+
+    $this->title = $formQuestion->FORMQUESTIONNAME;
     $labels = array();
     $data = array();
     $bgColor = array();
@@ -64,7 +68,7 @@ use yii\helpers\ArrayHelper;
         $type = 'horizontalBar';
         $datasets = null;
         $datasets[0] = [
-            'label' => "",
+            'label' => $formQuestion->FORMQUESTIONNAME,
             'backgroundColor' => $bgColor,
             'borderColor' => $bdColor,
             'pointBackgroundColor' => "rgba(179,181,198,1)",
@@ -90,7 +94,7 @@ use yii\helpers\ArrayHelper;
         $type = 'bar';
         $datasets = null;
         $datasets[0] = [
-            'label' => "",
+            'label' => $formQuestion->FORMQUESTIONNAME,
             'backgroundColor' => $bgColor,
             'borderColor' => $bdColor,
             'pointBackgroundColor' => "rgba(179,181,198,1)",
@@ -137,19 +141,39 @@ use yii\helpers\ArrayHelper;
 ?>
 
 <!-- Sumber:
-    https://github.com/2amigos/yii2-chartjs-widget -->
-<?=
+    https://github.com/2amigos/yii2-chartjs-widget 
+    https://stackoverflow.com/questions/31215170/how-do-i-make-a-link-use-post-method-in-yii 
+-->
+    
+    <h1><?= Html::encode($this->title) ?></h1>
 
-    $chart = ChartJs::widget([
-        'type' => $type,
-        // 'options' => [
-        //     'height' => 200,
-        //     'width' => 200,
-        // ],
-        'data' => [
-            'labels' => $labels,
-            'datasets' => $datasets,
+    <?php $form = ActiveForm::begin(['id' => 'form-list', 'options' => ['enctype' => 'multipart/form-data']]); ?>
+        <?= $form->field($modelFormPublish, 'item_id')->widget(\yii\bootstrap\ToggleButtonGroup::classname(), [
+            // configure additional widget properties here
+        ]) ?>
+    <?php ActiveForm::end(); ?>
+
+    <?= Html::a('Publish Chart', 
+        ['/admin/publish'], [
+        'data-method' => 'POST',
+        'data-params' => [
+            'formQuestionID' => $formQuestion->FORMQUESTIONID,
+            'formID' => $formID,
         ],
-        'clientOptions' =>  $clientOptions,
-    ]);
-?>
+]) ?>
+
+    <?=
+
+        $chart = ChartJs::widget([
+            'type' => $type,
+            // 'options' => [
+            //     'height' => 200,
+            //     'width' => 200,
+            // ],
+            'data' => [
+                'labels' => $labels,
+                'datasets' => $datasets,
+            ],
+            'clientOptions' =>  $clientOptions,
+        ]);
+    ?>

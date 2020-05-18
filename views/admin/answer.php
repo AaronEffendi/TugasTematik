@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <?php
                                     if($formQuestionTypeId == 3 || $formQuestionTypeId == 4 || $formQuestionTypeId == 5 || $formQuestionTypeId == 7){
                                         echo "$formQuestionName ";
-                                        echo Html::a('<i class="fa fa-pie-chart"></i>', Url::to(['admin/chart', 'formQuestionID' => $formQuestionID]));
+                                        echo Html::a('<i class="fa fa-pie-chart"></i>', Url::to(['admin/chart', 'formQuestionID' => $formQuestionID, 'formID' => $id]));
                                     }
                                     else{
                                         echo $formQuestionName;

@@ -20,7 +20,7 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
+            'identityClass' => 'app\models\UserData',
             'enableAutoLogin' => true,
         ],
         'errorHandler' => [
@@ -60,8 +60,24 @@ $config = [
         ],
         */
     ],
+    // 'as access' => [
+    //     'class' => \yii\filters\AccessControl::className(),//AccessControl::className(),
+    //     'rules' => [
+    //         [
+    //             'actions' => ['index'],
+    //             'allow' => true,
+    //         ],
+    //         [
+    //             //'actions' => ['logout', 'index'], // add all actions to take guest to login page
+    //             'allow' => true,
+    //             'roles' => ['@'],
+    //         ],
+    //     ],
+    // ],
     'params' => $params,
     'defaultRoute' => 'site/index'
+    // 'defaultRoute' => 'admin/index' //login
+
 ];
 
 if (YII_ENV_DEV) {
