@@ -25,7 +25,7 @@ class Country extends Model{
      // ini untuk insert answer pada iterasi pertama
     public function insertAnswer($sequence,$idFormAnswer,$id,$value){
         $commandFormAnswer = Yii::$app->db->createCommand("INSERT INTO FORMANSWER(FORMANSWERID,USEREMAIL,FORMID,FORMANSWERDATE,FORMANSWERSTATUS) VALUES($idFormAnswer,'rully.saputra@student.umn.ac.id',1,SYSDATE,1)")->execute();
-        $commandFormAnswerDetail = Yii::$app->db->createCommand("INSERT INTO FORMANSWERDETAIL(FORMANSWERDETAILID,FORMQUESTIONID,FORMANSWERID,FORMANSWERDETAILVALUE) VALUES($sequence,$id,2,'$value')")->execute();
+        $commandFormAnswerDetail = Yii::$app->db->createCommand("INSERT INTO FORMANSWERDETAIL(FORMANSWERDETAILID,FORMQUESTIONID,FORMANSWERID,FORMANSWERDETAILVALUE) VALUES($sequence,$id,$idFormAnswer,'$value')")->execute();
 
     }
     //ini untuk menghitung banyak formanswerdetailnya, jadi bisa dijadiin ID untuk formanswerdetail karena harus unik

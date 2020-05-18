@@ -10,10 +10,10 @@ use yii\widgets\ActiveForm;
 ?>
 
 <div class="container">
-    <div class="row d-flex justify-content-left py-3">
+    <div class="row d-flex justify-content-left py-5">
         <div class="col-lg-6 pr-0">
             <div class="section-tittle">
-                <h2>Satisfaction Survey</h2>
+                <h2><?php echo $formTitle['FORMLISTTITLE']; ?></h2>
             </div>
         </div>
     </div>

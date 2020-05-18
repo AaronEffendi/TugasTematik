@@ -157,6 +157,7 @@ class SiteController extends Controller
     }
     public function actionForm($formlistID)
     {
+        $formTitle = Formlist::find()->where(['FORMLISTID' => $formlistID])->one();
         $data;$value;
         $model = new Country();
         if(isset($formlistID)){
@@ -168,13 +169,13 @@ class SiteController extends Controller
         $modelsFormQuestion = new FormQuestion;
         $modelsFormQuestionOption = new FormQuestionOption;
         $modelsFormAnswerDetail = new FormAnswerDetail();
-        return $this->render('form',['FormAnswerDetail' => $modelsFormAnswerDetail,'data' => $data,'value' => $value]);
+        return $this->render('form',['FormAnswerDetail' => $modelsFormAnswerDetail,'data' => $data,'value' => $value, 'formTitle' => $formTitle]);
     }
     public function actionCoba(){
         $modelFormAnswer = new FormAnswerDetail;
         $model = new Country();
         $data = $model->questionID();
-        $tmp;$idFormAnswer;
+        $answerDetailValue;$idFormAnswer;
         //if($modelFormAnswer->load(Yii::$app->request->post())){
             //ini $trash cuman untuk mneampung, sama halnya dengan trash dibawahnya
             $trash = $model->count();
@@ -189,28 +190,27 @@ class SiteController extends Controller
             //tmpCount itu untuk nilai sequence yang dipassing ke insertAnswer dan masuk ke table formanswerdetail
             //karena harus unik
             $tmpCount = $count;
-                foreach($data as $loop){
-                    if(isset($_POST[$loop['ID']])){
-                    $tmp = $_POST[$loop['ID']];
-                    if($tmpCount == $count){
-                        //if ini sebenarnya pastiin bahwa hanya iterasi pertama kali yang jalanain insertAnswer
-                            $model->insertAnswer($tmpCount,$idFormAnswer,$loop['ID'],$tmp);
-                    }else{
-                        // ini untuk menghandle tipe data array kayak checkbox, jadi di check dulu apakah 
-                        // datanya array atau string biasa
-                        if(is_array($tmp)){
-                            foreach($tmp as $dat){
-                                $model->insertAnswerDetail($tmpCount,$idFormAnswer,$loop['ID'],$dat);
-                            }
-                        }else{
-                            $model->insertAnswerDetail($tmpCount,$idFormAnswer,$loop['ID'],$tmp);
-                        }
+
+            foreach($data as $loop){
+                if(isset($_POST[$loop['ID']])){
+                $answerDetailValue = $_POST[$loop['ID']];
+                // check apakah ada banyak jawaban atau hanya satu jawaban
+                if(is_array($answerDetailValue)){
+                    $allValue = '';
+                    foreach($answerDetailValue as $value){
+                        // echo $value;
+                        $allValue = $allValue .",". $value;
                     }
-                    
-                    $tmpCount++;
-                    }
+                    // echo $allValue;
+                    // $model->insertAnswerDetail($tmpCount,$idFormAnswer,$loop['ID'],$allValue);
+                }else{
+                    // $model->insertAnswerDetail($tmpCount,$idFormAnswer,$loop['ID'],$answerDetailValue);
+                    echo $answerDetailValue;
                 }
-            return $this->render('coba',['tmp' => $tmp]);
+                $tmpCount++;
+                }
+            }
+            //return $this->render('coba',['tmp' => $tmp]);
         //}
     }
     public function actionForms()
