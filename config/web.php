@@ -75,7 +75,9 @@ $config = [
     //     ],
     // ],
     'params' => $params,
-    'defaultRoute' => 'admin/index' //login
+    'defaultRoute' => 'site/index'
+    // 'defaultRoute' => 'admin/index' //login
+
 ];
 
 if (YII_ENV_DEV) {

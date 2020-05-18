@@ -79,12 +79,11 @@ $this->title = 'UMN SURVEY';
                                 <span  class="flaticon-tasks"></span>
                             </div>
                             <div class="do-caption">
-                                <!-- <h4><?= Html::encode($formlist['FORMLISTTITLE'])?></h4> -->
                                 <h4><?= $formlist->FORMLISTTITLE?></h4>
                                 <p>Hunky dory barney fanny around up the duff no biggie loo cup of tea jolly good ruddy say arse!</p>
                             </div>
                             <div class="do-btn">
-                                <a href="<?= Url::toRoute('site/form')?>"><i class="ti-arrow-right"></i>FIIL FORM</a>
+                                <a href="<?= Url::toRoute(['site/form', 'formlistID' => $formlist->FORMLISTID])?>"><i class="ti-arrow-right"></i>FIIL FORM</a>
                             </div>
                         </div>
                     </div>

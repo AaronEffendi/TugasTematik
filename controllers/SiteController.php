@@ -17,6 +17,11 @@ use app\models\Country;
 use app\models\Answer;
 use app\models\Formlist;
 use yii\widgets\ActiveForm;
+use app\models\FormQuestion;
+use app\models\FormQuestionOption;
+use app\models\FormQuestionType;
+use app\models\FormAnswerDetail;
+use app\models\FormAnswer;
 
 class SiteController extends Controller
 {
@@ -142,35 +147,71 @@ class SiteController extends Controller
     }
     public function actionSurvey()
     {
-        return $this->render('survey');
+        $model = Formlist::find()->all();
+        $data = array();
+        return $this->render('survey',['data' => $model]);
     }
     public function actionGraph()
     {
         return $this->render('index');
     }
-    public function actionForm()
+    public function actionForm($formlistID)
     {
+        $formTitle = Formlist::find()->where(['FORMLISTID' => $formlistID])->one();
+        $data;$value;
         $model = new Country();
-        $data = array();
-        $value = array();
-        $data = $model->question();
-        $value = $model->checkbox();
-        $num = count($data);
-        for($i = 0 ; $i < $num ;$i++){
-            $this->questionID[$i] = $data[$i]['ID'];
-        }
-        // print_r($this->questionID);
-        return $this->render('form',['data' => $data,'value' =>$value]);
+        if(isset($formlistID)){
+            $data = $model->question($formlistID);
+            $value = $model->checkbox($formlistID);
+        }else{
+            return $this->render('error');
+        } 
+        $modelsFormQuestion = new FormQuestion;
+        $modelsFormQuestionOption = new FormQuestionOption;
+        $modelsFormAnswerDetail = new FormAnswerDetail();
+        return $this->render('form',['FormAnswerDetail' => $modelsFormAnswerDetail,'data' => $data,'value' => $value, 'formTitle' => $formTitle]);
     }
     public function actionCoba(){
-        $data = array() ;
-        $num = count($this->questionID);
-        for($i = 0 ; $i < $num ; $i++){
-            if(isset($_POST['2'])){
-                $data[$i] = $_POST['2'];
+        $modelFormAnswer = new FormAnswerDetail;
+        $model = new Country();
+        $data = $model->questionID();
+        $answerDetailValue;$idFormAnswer;
+        //if($modelFormAnswer->load(Yii::$app->request->post())){
+            //ini $trash cuman untuk mneampung, sama halnya dengan trash dibawahnya
+            $trash = $model->count();
+            $trashIDFormAnswer = $model->countFormAnswer();
+            // dua foreach ini untuk ambil nilai dan taruh di variable iterasi
+            foreach($trash as $tr){
+                $count = $tr['SEQ'] + 1;
             }
-        }
-        return $this->render('coba',['data' => $data]);
+            foreach($trashIDFormAnswer as $tr){
+                $idFormAnswer = $tr['SEQ'] + 1;
+            }
+            //tmpCount itu untuk nilai sequence yang dipassing ke insertAnswer dan masuk ke table formanswerdetail
+            //karena harus unik
+            $tmpCount = $count;
+
+            foreach($data as $loop){
+                if(isset($_POST[$loop['ID']])){
+                $answerDetailValue = $_POST[$loop['ID']];
+                // check apakah ada banyak jawaban atau hanya satu jawaban
+                if(is_array($answerDetailValue)){
+                    $allValue = '';
+                    foreach($answerDetailValue as $value){
+                        // echo $value;
+                        $allValue = $allValue .",". $value;
+                    }
+                    // echo $allValue;
+                    // $model->insertAnswerDetail($tmpCount,$idFormAnswer,$loop['ID'],$allValue);
+                }else{
+                    // $model->insertAnswerDetail($tmpCount,$idFormAnswer,$loop['ID'],$answerDetailValue);
+                    echo $answerDetailValue;
+                }
+                $tmpCount++;
+                }
+            }
+            //return $this->render('coba',['tmp' => $tmp]);
+        //}
     }
     public function actionForms()
     {
