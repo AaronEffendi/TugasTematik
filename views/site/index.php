@@ -4,6 +4,9 @@
 use yii\helpers\Html;
 use dosamigos\chartjs\ChartJs;
 use yii\helpers\Url;
+use app\models\FormQuestion;
+use app\models\FormList;
+
 $this->title = 'UMN SURVEY';
 ?>
 <!-- Preloader Start -->
@@ -93,206 +96,141 @@ $this->title = 'UMN SURVEY';
     </div>
 
     <div id="graph">
-        <div class="row mb-5">
-            <div class="col-lg-6 col-md-6">
-                <?= ChartJs::widget([
-                    'type' => 'line',
-                    'options' => [
-                        'height' => 400,
-                        'width' => 400
-                    ],
-                    'data' => [
-                        'labels' => ["Kantin", "Kelas", "Lab", "Taman", "Lapangan", "Lecture Hall", "Perpustakaan"],
-                        'datasets' => [
-                            [
-                                'label' => "My First dataset",
-                                'backgroundColor' => "rgba(179,181,198,0.2)",
-                                'borderColor' => "rgba(179,181,198,1)",
-                                'pointBackgroundColor' => "rgba(179,181,198,1)",
-                                'pointBorderColor' => "#fff",
-                                'pointHoverBackgroundColor' => "#fff",
-                                'pointHoverBorderColor' => "rgba(179,181,198,1)",
-                                'data' => [65, 59, 90, 81, 56, 55, 40]
-                            ],
-                            [
-                                'label' => "My Second dataset",
-                                'backgroundColor' => "rgba(255,99,132,0.2)",
-                                'borderColor' => "rgba(255,99,132,1)",
-                                'pointBackgroundColor' => "rgba(255,99,132,1)",
-                                'pointBorderColor' => "#fff",
-                                'pointHoverBackgroundColor' => "#fff",
-                                'pointHoverBorderColor' => "rgba(255,99,132,1)",
-                                'data' => [28, 48, 40, 19, 96, 27, 100]
-                            ]
-                        ]
-                    ]
-                ]);
+        <?php
+            $backgroundColor = array(
+                "rgba(255,0,0,0.2)", "rgba(0,255,0,0.2)", "rgba(0,0,255,0.2)", 
+                "rgba(255,255,0,0.2)", "rgba(0,255,255,0.2)", "rgba(255,0,255,0.2)", 
+                "rgba(192,192,192,0.2)", "rgba(128,0,0,0.2)", "rgba(0,128,0,0.2)");
+            $borderColor = array(
+                "rgba(255,0,0,1)", "rgba(0,255,0,1)", "rgba(0,0,255,1)", 
+                "rgba(255,255,0,1)", "rgba(0,255,255,1)", "rgba(255,0,255,1)", 
+                "rgba(192,192,192,1)", "rgba(128,0,0,1)", "rgba(0,128,0,1)");
+            $type = null;
+            
+            foreach($graph as $formIDs => $formQuestionIDs){
+                foreach($formQuestionIDs as $formQuestionID => $formOptionValues){
+                    $labels = array();
+                    $data = array();
+                    $bgColor = array();
+                    $bdColor = array();
+                    $datasets = array();
+                    $clientOptions = array();
+
+                    $keys = array_keys( $formOptionValues );
+                    for($x = 0; $x < sizeof($keys); $x++ ) { 
+                        $labels[$x] = $keys[$x];
+                        $data[$x] = $formOptionValues[$keys[$x]];
+                        $bgColor[$x] = $backgroundColor[$x];
+                        $bdColor[$x] = $borderColor[$x];
                 
-                ?>
-            </div>
-            <div class="col-lg-6 col-md-6">
-                <?= ChartJs::widget([
-                    'type' => 'bar',
-                    'options' => [
-                        'height' => 400,
-                        'width' => 400,
-                        'scales' => [
-                            'xAxes' => [
-                                'stacked' => true
+                        $datasets[$x] = 
+                        [
+                            'label' => $keys[$x],
+                            'backgroundColor' => $backgroundColor[$x],
+                            'borderColor' => $borderColor[$x],
+                            'pointBackgroundColor' => "rgba(179,181,198,1)",
+                            'pointBorderColor' => "#fff",
+                            'pointHoverBackgroundColor' => "#fff",
+                            'pointHoverBorderColor' => "rgba(179,181,198,1)",
+                            'data' => $formOptionValues[$keys[$x]]
+                        ];
+                    }
+                    
+                    $formQuestion = FormQuestion::find()->select(['FORMQUESTIONTYPEID', 'FORMQUESTIONNAME'])->where(['FORMQUESTIONID' => $formQuestionID])->one();
+                    $formTypeId = $formQuestion['FORMQUESTIONTYPEID'];
+                    $formQuestionName = $formQuestion['FORMQUESTIONNAME'];
+                    $formTitle = FormList::find()->select(['FORMLISTTITLE'])
+                        ->innerJoin('FORM', 'FORM.FORMLISTID = FORMLIST.FORMLISTID')
+                        ->where(['FORM.FORMID' => $formIDs])->one()['FORMLISTTITLE'];
+
+                    if($formTypeId == 3 || $formTypeId == 5){ // Multiple choice - Pie
+                        $type = 'pie';
+                        $datasets = null;
+                        $datasets[0] = [
+                            'label' => $labels,
+                            'backgroundColor' => $bgColor,
+                            'borderColor' => $bdColor,
+                            'pointBackgroundColor' => "rgba(179,181,198,1)",
+                            'pointBorderColor' => "#fff",
+                            'pointHoverBackgroundColor' => "#fff",
+                            'pointHoverBorderColor' => "rgba(179,181,198,1)",
+                            'data' => $data
+                        ];
+                    }
+                    elseif($formTypeId == 4){ // Checkbox - Horizontal bar
+                        $type = 'horizontalBar';
+                        $datasets = null;
+                        $datasets[0] = [
+                            'label' => $formQuestionName,
+                            'backgroundColor' => $bgColor,
+                            'borderColor' => $bdColor,
+                            'pointBackgroundColor' => "rgba(179,181,198,1)",
+                            'pointBorderColor' => "#fff",
+                            'pointHoverBackgroundColor' => "#fff",
+                            'pointHoverBorderColor' => "rgba(179,181,198,1)",
+                            'data' => $data
+                        ];
+                        $clientOptions = [
+                            'scales' => [
+                                'xAxes' => [[
+                                    'ticks' => [
+                                        'beginAtZero' => 'true', 
+                                        # Sumber: 
+                                        # https://github.com/2amigos/yii2-chartjs-widget/issues/22
+                                        # https://github.com/2amigos/yii2-chartjs-widget/issues/32
+                                    ]
+                                ]],
                             ],
-                            'yAxes' => [
-                                'stacked' => true,
-                                'ticks' => [
-                                    'beginAtZero' => true
-                                ]
-                            ]
-                        ]
-                    ],
-                    'data' => [
-                        'labels' => ["Kantin", "Kelas", "Lab", "Taman", "Lapangan", "Lecture Hall", "Perpustakaan"],
-                        'datasets' => [
-                            [
-                                'label' => "My First dataset",
-                                'fill' => 'false',
-                                'backgroundColor' => [
-                                    "rgba(255, 99, 132, 0.2)",
-                                    "rgba(255, 159, 64, 0.2)",
-                                    "rgba(255, 205, 86, 0.2)",
-                                    "rgba(75, 192, 192, 0.2)",
-                                    "rgba(54, 162, 235, 0.2)",
-                                    "rgba(153, 102, 255, 0.2)",
-                                    "rgba(201, 203, 207, 0.2)"
-                                ],
-                                'borderColor' => [
-                                    "rgb(255, 99, 132)",
-                                    "rgb(255, 159, 64)",
-                                    "rgb(255, 205, 86)",
-                                    "rgb(75, 192, 192)",
-                                    "rgb(54, 162, 235)",
-                                    "rgb(153, 102, 255)",
-                                    "rgb(201, 203, 207)"
-                                ],
-                                'borderWidth' => 1,
-                                'barPercentage' => 0.5,
-                                'barThickness' => 6,
-                                'maxBarThickness' => 8,
-                                'minBarLength' => 2,
-                                'data' => [50, 30, 70, 30, 60, 50, 20]
-                            ]
-                        ]
-                    ]
-                ]);
-                ?>
-            </div>
-        </div>
-        <div class="row mb-5">
-            <div class="col-lg-6 col-md-6">
-                <?= ChartJs::widget([
-                    'type' => 'pie',
-                    'options' => [
-                        'height' => 400,
-                        'width' => 400
-                    ],
-                    'data' => [
-                        'labels' => ["Sering", "Kadan-Kadang", "Jarang"],
-                        'datasets' => [
-                            [
-                                'label' => "My First dataset",
-                                'backgroundColor' => [ 
-                                    "rgb(255, 99, 132)",
-                                    "rgb(54, 162, 235)",
-                                    "rgb(255, 205, 86)"
-                                ],
-                                'data' => [300, 100, 50]
-                            ]
-                        ]
-                    ]
-                ]);
-                
-                ?>
-            </div>
-            <div class="col-lg-6 col-md-6">
-                <?= ChartJs::widget([
-                    'type' => 'horizontalBar',
-                    'options' => [
-                        'height' => 400,
-                        'width' => 400,
-                        'scales' => [
-                            'xAxes' => [
-                                'stacked' => true
+                        ];
+                    }
+                    elseif($formTypeId == 7){ // Linear Scale - Vertical bar
+                        $type = 'bar';
+                        $datasets = null;
+                        $datasets[0] = [
+                            'label' => $formQuestionName,
+                            'backgroundColor' => $bgColor,
+                            'borderColor' => $bdColor,
+                            'pointBackgroundColor' => "rgba(179,181,198,1)",
+                            'pointBorderColor' => "#fff",
+                            'pointHoverBackgroundColor' => "#fff",
+                            'pointHoverBorderColor' => "rgba(179,181,198,1)",
+                            'data' => $data
+                        ];
+                        $clientOptions = [
+                            'scales' => [
+                                'yAxes' => [[
+                                    'ticks' => [
+                                        'beginAtZero' => 'true', 
+                                        # Sumber: 
+                                        # https://github.com/2amigos/yii2-chartjs-widget/issues/22
+                                        # https://github.com/2amigos/yii2-chartjs-widget/issues/32
+                                    ]
+                                ]],
                             ],
-                            'yAxes' => [
-                                'stacked' => true,
-                                'ticks' => [
-                                    'beginAtZero' => true
-                                ]
-                            ]
-                        ]
-                    ],
-                    'data' => [
-                        'labels' => ["Kantin", "Kelas", "Lab", "Taman", "Lapangan", "Lecture Hall", "Perpustakaan"],
-                        'datasets' => [
-                            [
-                                'label' => "My First dataset",
-                                'fill' => 'false',
-                                'backgroundColor' => [
-                                    "rgba(255, 99, 132, 0.2)",
-                                    "rgba(255, 159, 64, 0.2)",
-                                    "rgba(255, 205, 86, 0.2)",
-                                    "rgba(75, 192, 192, 0.2)",
-                                    "rgba(54, 162, 235, 0.2)",
-                                    "rgba(153, 102, 255, 0.2)",
-                                    "rgba(201, 203, 207, 0.2)"
-                                ],
-                                'borderColor' => [
-                                    "rgb(255, 99, 132)",
-                                    "rgb(255, 159, 64)",
-                                    "rgb(255, 205, 86)",
-                                    "rgb(75, 192, 192)",
-                                    "rgb(54, 162, 235)",
-                                    "rgb(153, 102, 255)",
-                                    "rgb(201, 203, 207)"
-                                ],
-                                'borderWidth' => 1,
-                                'barPercentage' => 0.5,
-                                'barThickness' => 6,
-                                'maxBarThickness' => 8,
-                                'minBarLength' => 2,
-                                'data' => [50, 30, 70, 30, 60, 50, 20]
-                            ]
-                        ]
-                    ]
-                ]);
-                ?>
-            </div>
-        </div>
-        <div class="row mb-5">
-            <div class="col-lg-6 col-md-6">
-                <?= ChartJs::widget([
-                    'type' => 'doughnut',
-                    'options' => [
-                        'height' => 400,
-                        'width' => 400
-                    ],
-                    'data' => [
-                        'labels' => ["Sering", "Kadan-Kadang", "Jarang"],
-                        'datasets' => [
-                            [
-                                'label' => "My First dataset",
-                                'backgroundColor' => [ 
-                                    "rgb(255, 99, 132)",
-                                    "rgb(54, 162, 235)",
-                                    "rgb(255, 205, 86)"
-                                ],
-                                'data' => [300, 100, 50]
-                            ]
-                        ]
-                    ]
-                ]);
-                
-                ?>
-            </div>
-        </div>
+                        ];
+                    }
+                    else{ // Trend
+                        $type = 'line';
+                    }
+
+                    echo "<h1> $formTitle <h1>";
+                    echo "<h3> $formQuestionName </h3><br>";
+                    echo $chart = ChartJs::widget([
+                        'type' => $type,
+                        // 'options' => [
+                        //     'height' => 200,
+                        //     'width' => 200,
+                        // ],
+                        'data' => [
+                            'labels' => $labels,
+                            'datasets' => $datasets,
+                        ],
+                        'clientOptions' =>  $clientOptions,
+                    ]);
+                    echo "<br><br><br><br>";
+                }
+            }
+        ?>
     </div>
 </main>
 
