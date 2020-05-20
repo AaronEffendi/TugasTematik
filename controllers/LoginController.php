@@ -18,6 +18,7 @@ class LoginController extends \yii\web\Controller
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             $role = $model->getRole();
+            Yii::$app->session->set('role',$role);
 
             if ($role == 5) { // Role is admin
                 return $this->redirect(['admin/index']);
