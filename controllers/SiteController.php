@@ -81,6 +81,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        $role = Yii::$app->session->get('role');
         $model = Formlist::find()->all();
         $data = array();
         $modelFormPublish = FormPublish::find()->all();
