@@ -23,6 +23,8 @@ use app\models\FormQuestionType;
 use app\models\FormAnswerDetail;
 use app\models\FormAnswer;
 
+use app\models\FormPublish;
+
 class SiteController extends Controller
 {
     public $layout = 'main_user';
@@ -79,9 +81,38 @@ class SiteController extends Controller
     {
         $model = Formlist::find()->all();
         $data = array();
-        // $data = $model->attributeLabels();
-        return $this->render('index',['data' => $model]);
-        // return $this->render('index');
+        $modelFormPublish = FormPublish::find()->all();
+        // $modelFormAnswer = FormAnswer::find()->where(['FORMID' => $modelFormPublish[0]->FORMID])->all();
+
+        $graph = array();
+        foreach($modelFormPublish as $formPublish){
+            if(empty($graph["$formPublish[FORMID]"])){
+                $graph["$formPublish[FORMID]"] = array();
+            }
+            
+            $formQuestionOption = FormQuestionOption::find()
+                ->where(['FORMQUESTIONID' => $formPublish->FORMQUESTIONID])->all();
+
+            $countArray = [];
+            foreach($formQuestionOption as $formOption){
+                $countArray["$formOption->FORMQUESTIONVALUE"] = 0; // Awalnya diinisialisasi 0 semua
+            }
+
+            $keys = array_keys( $countArray ); 
+            for($x = 0; $x < sizeof($keys); $x++ ) { 
+                // Masukin JUMLAH orang yang ngejawab pilihan A ke array A, dst.
+                $countArray[$keys[$x]] = FormAnswerDetail::find()
+                            ->where(['FORMANSWERDETAILVALUE' => $keys[$x]])
+                            ->count();
+            } 
+
+            $graph["$formPublish[FORMID]"]["$formPublish[FORMQUESTIONID]"] = $countArray;
+
+        }
+
+        return $this->render('index',[
+            'data' => $model,
+            'graph' => $graph]);
     }
 
     /**
