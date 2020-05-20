@@ -36,7 +36,7 @@ $this->title = 'UMN SURVEY';
                                 <p data-animation="fadeInLeft" data-delay=".6s">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravi.</p>
                                 <!-- Hero-btn -->
                                 <div class="hero__btn" data-animation="fadeInLeft" data-delay=".8s">
-                                    <a href="index.html#recentform" class="btn hero-btn">MORE INFO</a>
+                                    <a href="<?= Url::toRoute('site/index')?>#recentform" class="btn hero-btn">MORE INFO</a>
                                 </div>
                             </div>
                         </div>
@@ -93,18 +93,18 @@ $this->title = 'UMN SURVEY';
                             'itemsDesktopSmall' => [979, 3]
                         ]
                     ]);
-                    foreach($data as $formlist) :?>
+                    foreach($data as $form) :?>
                         <div class="item-class">
                             <div class="single-do text-center mb-30">
                                 <div class="do-icon">
                                     <span  class="flaticon-tasks"></span>
                                 </div>
                                 <div class="do-caption">
-                                    <h4><?= $formlist->FORMLISTTITLE?></h4>
+                                    <h4><?= $form->FORMLISTTITLE?></h4>
                                     <p>Hunky dory barney fanny around up the duff no biggie loo cup of tea jolly good ruddy say arse!</p>
                                 </div>
                                 <div class="do-btn">
-                                    <a href="<?= Url::toRoute(['site/form', 'formlistID' => $formlist->FORMLISTID])?>"><i class="ti-arrow-right"></i>FIIL FORM</a>
+                                    <a href="<?= Url::toRoute(['site/form', 'formlistID' => $form->FORMLISTID])?>"><i class="ti-arrow-right"></i>FIIL FORM</a>
                                 </div>
                             </div>
                         </div>
@@ -255,4 +255,4 @@ $this->title = 'UMN SURVEY';
     </div>
 </main>
 
-<p><a class="btn btn-lg btn-success" href="http://localhost/Survey/web/index.php?r=gii">Hello GII!</a></p>
+<!-- <p><a class="btn hero-btn" href="http://localhost/Survey/web/index.php?r=gii">Hello GII!</a></p> -->

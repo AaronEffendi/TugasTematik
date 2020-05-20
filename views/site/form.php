@@ -13,11 +13,11 @@ use yii\widgets\ActiveForm;
     <div class="row d-flex justify-content-left py-5">
         <div class="col-lg-6 pr-0">
             <div class="section-tittle">
-                <h2><?php echo $formTitle['FORMLISTTITLE']; ?></h2>
+                <h2><?php echo $formlist['FORMLISTTITLE']; ?></h2>
             </div>
         </div>
     </div>
-    <?=  Html::beginForm(['coba','id' => $formListID],'post');
+    <?=  Html::beginForm(['answer','formID' => $formID, 'formTitle' => $formlist['FORMLISTTITLE']],'post');
         foreach($data as $row) :?>
             <?php if($row['ID_TYPE'] == 1 || $row['ID_TYPE'] == 2){?>
                 <?php if($row['ID_TYPE'] == 1){?>
@@ -71,6 +71,6 @@ use yii\widgets\ActiveForm;
                 </div>
             <?php } ?>
         <?php endforeach;?>
-    <?= Html::submitButton('Submit', ['class' => 'btn btn-primary']) ?>
+    <?= Html::submitButton('Submit Your Answer', ['class' => 'btn btn-primary']) ?>
     </form>
 </div>

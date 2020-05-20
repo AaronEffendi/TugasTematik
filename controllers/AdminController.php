@@ -137,10 +137,10 @@ class AdminController extends Controller
                 $modelForm->save();
                 $transaction->commit();
                 
-                echo "<pre>";
-                print_r($modelForm);
-                print_r($modelFormList);
-                echo "</pre>";
+                // echo "<pre>";
+                // print_r($modelForm);
+                // print_r($modelFormList);
+                // echo "</pre>";
                 
                 try {
                     if ($flag = $modelFormList->save(false)) {
