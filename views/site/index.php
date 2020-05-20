@@ -4,6 +4,7 @@
 use yii\helpers\Html;
 use dosamigos\chartjs\ChartJs;
 use yii\helpers\Url;
+use kv4nt\owlcarousel\OwlCarouselWidget;
 $this->title = 'UMN SURVEY';
 ?>
 <!-- Preloader Start -->
@@ -72,28 +73,48 @@ $this->title = 'UMN SURVEY';
     <div class="what-we-do we-padding" id="recentform">
         <div class="container">
             <div class="row">
-                <?php foreach($data as $formlist) :?>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="single-do text-center mb-30">
-                            <div class="do-icon">
-                                <span  class="flaticon-tasks"></span>
-                            </div>
-                            <div class="do-caption">
-                                <h4><?= $formlist->FORMLISTTITLE?></h4>
-                                <p>Hunky dory barney fanny around up the duff no biggie loo cup of tea jolly good ruddy say arse!</p>
-                            </div>
-                            <div class="do-btn">
-                                <a href="<?= Url::toRoute(['site/form', 'formlistID' => $formlist->FORMLISTID])?>"><i class="ti-arrow-right"></i>FIIL FORM</a>
+                <?php
+                    OwlCarouselWidget::begin([
+                        'container' => 'div',
+                        'assetType' => OwlCarouselWidget::ASSET_TYPE_CDN,
+                        'containerOptions' => [
+                            'id' => 'container-id',
+                            'class' => 'container-class owl-theme'
+                        ],
+                        'pluginOptions'    => [
+                            'autoplay'          => true,
+                            'autoplayTimeout'   => 3000,
+                            'items'             => 3,
+                            'loop'              => true,
+                            'itemsDesktop'      => [1199, 3],
+                            'itemsDesktopSmall' => [979, 3]
+                        ]
+                    ]);
+                    foreach($data as $formlist) :?>
+                        <div class="item-class">
+                            <div class="single-do text-center mb-30">
+                                <div class="do-icon">
+                                    <span  class="flaticon-tasks"></span>
+                                </div>
+                                <div class="do-caption">
+                                    <h4><?= $formlist->FORMLISTTITLE?></h4>
+                                    <p>Hunky dory barney fanny around up the duff no biggie loo cup of tea jolly good ruddy say arse!</p>
+                                </div>
+                                <div class="do-btn">
+                                    <a href="<?= Url::toRoute(['site/form', 'formlistID' => $formlist->FORMLISTID])?>"><i class="ti-arrow-right"></i>FIIL FORM</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                <?php endforeach;?>
+                    <?php endforeach;?>
+                <?php OwlCarouselWidget::end(); ?>
             </div>
         </div>
     </div>
 
+
+
     <div id="graph">
-        <div class="row mb-5">
+        <div class="row my-5">
             <div class="col-lg-6 col-md-6">
                 <?= ChartJs::widget([
                     'type' => 'line',
