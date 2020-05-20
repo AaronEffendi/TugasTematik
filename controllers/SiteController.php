@@ -33,6 +33,7 @@ class SiteController extends Controller
      */
     private $questionID = array();
     private $surveyID = array();
+    public $formListIDGlobal;
     public function behaviors()
     {
         return [
@@ -189,9 +190,10 @@ class SiteController extends Controller
     public function actionForm($formlistID)
     {
         $formTitle = Formlist::find()->where(['FORMLISTID' => $formlistID])->one();
-        $data;$value;
+        $data;$value;$id;
         $model = new Country();
         if(isset($formlistID)){
+            $id = $formlistID ;
             $data = $model->question($formlistID);
             $value = $model->checkbox($formlistID);
         }else{
@@ -200,13 +202,17 @@ class SiteController extends Controller
         $modelsFormQuestion = new FormQuestion;
         $modelsFormQuestionOption = new FormQuestionOption;
         $modelsFormAnswerDetail = new FormAnswerDetail();
-        return $this->render('form',['FormAnswerDetail' => $modelsFormAnswerDetail,'data' => $data,'value' => $value, 'formTitle' => $formTitle]);
+        return $this->render('form',['FormAnswerDetail' => $modelsFormAnswerDetail,'data' => $data,'value' => $value, 'formTitle' => $formTitle,'formListID' =>$id]);
     }
     public function actionCoba(){
         $modelFormAnswer = new FormAnswerDetail;
         $model = new Country();
         $data = $model->questionID();
         $answerDetailValue;$idFormAnswer;
+        $formlistID;
+        if(isset($_GET['id'])){
+            $formlistID = $_GET['id'];
+        }
         //if($modelFormAnswer->load(Yii::$app->request->post())){
             //ini $trash cuman untuk mneampung, sama halnya dengan trash dibawahnya
             $trash = $model->count();
@@ -221,7 +227,7 @@ class SiteController extends Controller
             //tmpCount itu untuk nilai sequence yang dipassing ke insertAnswer dan masuk ke table formanswerdetail
             //karena harus unik
             $tmpCount = $count;
-
+            $counter = 0;
             foreach($data as $loop){
                 if(isset($_POST[$loop['ID']])){
                 $answerDetailValue = $_POST[$loop['ID']];
@@ -232,13 +238,18 @@ class SiteController extends Controller
                         // echo $value;
                         $allValue = $allValue .",". $value;
                     }
+                    if($counter == 0){
+                        $model->insertAnswer($tmpCount,$idFormAnswer,$loop['ID'],$allValue,$formlistID);
+                    }else{
+                        $model->insertAnswerDetail($tmpCount,$idFormAnswer,$loop['ID'],$answerDetailValue);
+                    }
                     // echo $allValue;
-                    // $model->insertAnswerDetail($tmpCount,$idFormAnswer,$loop['ID'],$allValue);
+                }else if($counter == 0){
+                     $model->insertAnswer($tmpCount,$idFormAnswer,$loop['ID'],$answerDetailValue,$formlistID);
                 }else{
-                    // $model->insertAnswerDetail($tmpCount,$idFormAnswer,$loop['ID'],$answerDetailValue);
-                    echo $answerDetailValue;
+                    $model->insertAnswerDetail($tmpCount,$idFormAnswer,$loop['ID'],$answerDetailValue);
                 }
-                $tmpCount++;
+                $tmpCount++;$counter++;
                 }
             }
             //return $this->render('coba',['tmp' => $tmp]);

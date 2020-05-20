@@ -17,7 +17,7 @@ use yii\widgets\ActiveForm;
             </div>
         </div>
     </div>
-    <?=  Html::beginForm(['coba'],'post');
+    <?=  Html::beginForm(['coba','id' => $formListID],'post');
         foreach($data as $row) :?>
             <?php if($row['ID_TYPE'] == 1 || $row['ID_TYPE'] == 2){?>
                 <?php if($row['ID_TYPE'] == 1){?>
