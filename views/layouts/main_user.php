@@ -40,7 +40,7 @@ HomeAsset::register($this);
                     <!-- Logo -->
                     <div class="col-xl-2 col-lg-2 col-md-1">
                         <div class="logo">
-                            <a href="index.html"><img src="assets/img/logo/umnsurveylogo.png" height="38" width="123" alt=""></a>
+                            <a href="<?= Url::toRoute('site/index')?>"><img src="assets/img/logo/umnsurveylogo.png" height="38" width="123" alt=""></a>
                         </div>
                     </div>
                     <div class="col-xl-8 col-lg-8 col-md-8">
@@ -48,9 +48,9 @@ HomeAsset::register($this);
                         <div class="main-menu f-right d-none d-lg-block">
                             <nav> 
                                 <ul id="navigation">    
-                                    <li><a href="index.html"> Home</a></li>
+                                    <li><a href="<?= Url::toRoute('site/index')?>"> Home</a></li>
                                     <li><a href="<?= Url::toRoute('site/survey')?>">Survey</a></li>
-                                    <li><a href="index.html#graph">Graph</a></li>
+                                    <li><a href="<?= Url::toRoute('site/index')?>#graph">Graph</a></li>
                                 </ul>
                             </nav>
                         </div>
@@ -115,13 +115,13 @@ HomeAsset::register($this);
                         <div class="footer-tittle">
                             <h4 class="mb-4">INFORMASI PENDAFTARAN</h4>
                             <ul>
-                                <li><a href="#">Email : admisi@umn.ac.id</a></li>
-                                <li><a href="#"> Format : nama, alamat, no.telp, jurusan, dan keterangan</a></li>
+                                <li style="color: #707b8e;">Email : <a href="#">admisi@umn.ac.id</a></li>
+                                <li style="color: #707b8e;">Format : nama, alamat, no.telp, jurusan, dan keterangan</li>
                                 
                             </ul>
                             <h4 class=" pt-5 mb-4">INFORMASI UMN</h4>
                             <ul>
-                                <li><a href="#">Email : marketing@umn.ac.id</a></li>
+                                <li style="color: #707b8e;">Email : <a href="#">marketing@umn.ac.id</a></li>
                             </ul>
                         </div>
                     </div>

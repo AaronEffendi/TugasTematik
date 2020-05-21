@@ -4,6 +4,7 @@
 use yii\helpers\Html;
 use dosamigos\chartjs\ChartJs;
 use yii\helpers\Url;
+use kv4nt\owlcarousel\OwlCarouselWidget;
 use app\models\FormQuestion;
 use app\models\FormList;
 
@@ -35,7 +36,7 @@ $this->title = 'UMN SURVEY';
                                 <p data-animation="fadeInLeft" data-delay=".6s">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravi.</p>
                                 <!-- Hero-btn -->
                                 <div class="hero__btn" data-animation="fadeInLeft" data-delay=".8s">
-                                    <a href="index.html#recentform" class="btn hero-btn">MORE INFO</a>
+                                    <a href="<?= Url::toRoute('site/index')?>#recentform" class="btn hero-btn">MORE INFO</a>
                                 </div>
                             </div>
                         </div>
@@ -75,25 +76,45 @@ $this->title = 'UMN SURVEY';
     <div class="what-we-do we-padding" id="recentform">
         <div class="container">
             <div class="row">
-                <?php foreach($data as $formlist) :?>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="single-do text-center mb-30">
-                            <div class="do-icon">
-                                <span  class="flaticon-tasks"></span>
-                            </div>
-                            <div class="do-caption">
-                                <h4><?= $formlist->FORMLISTTITLE?></h4>
-                                <p>Hunky dory barney fanny around up the duff no biggie loo cup of tea jolly good ruddy say arse!</p>
-                            </div>
-                            <div class="do-btn">
-                                <a href="<?= Url::toRoute(['site/form', 'formlistID' => $formlist->FORMLISTID])?>"><i class="ti-arrow-right"></i>FIIL FORM</a>
+                <?php
+                    OwlCarouselWidget::begin([
+                        'container' => 'div',
+                        'assetType' => OwlCarouselWidget::ASSET_TYPE_CDN,
+                        'containerOptions' => [
+                            'id' => 'container-id',
+                            'class' => 'container-class owl-theme'
+                        ],
+                        'pluginOptions'    => [
+                            'autoplay'          => true,
+                            'autoplayTimeout'   => 3000,
+                            'items'             => 3,
+                            'loop'              => true,
+                            'itemsDesktop'      => [1199, 3],
+                            'itemsDesktopSmall' => [979, 3]
+                        ]
+                    ]);
+                    foreach($data as $form) :?>
+                        <div class="item-class">
+                            <div class="single-do text-center mb-30">
+                                <div class="do-icon">
+                                    <span  class="flaticon-tasks"></span>
+                                </div>
+                                <div class="do-caption">
+                                    <h4><?= $form->FORMLISTTITLE?></h4>
+                                    <p>Hunky dory barney fanny around up the duff no biggie loo cup of tea jolly good ruddy say arse!</p>
+                                </div>
+                                <div class="do-btn">
+                                    <a href="<?= Url::toRoute(['site/form', 'formlistID' => $form->FORMLISTID])?>"><i class="ti-arrow-right"></i>FIIL FORM</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                <?php endforeach;?>
+                    <?php endforeach;?>
+                <?php OwlCarouselWidget::end(); ?>
             </div>
         </div>
     </div>
+
+
 
     <div id="graph">
         <?php
@@ -242,4 +263,4 @@ $this->title = 'UMN SURVEY';
     </div>
 </main>
 
-<p><a class="btn btn-lg btn-success" href="http://localhost/Survey/web/index.php?r=gii">Hello GII!</a></p>
+<!-- <p><a class="btn hero-btn" href="http://localhost/Survey/web/index.php?r=gii">Hello GII!</a></p> -->

@@ -15,6 +15,7 @@ use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\Country;
 use app\models\Answer;
+use app\models\Form;
 use app\models\Formlist;
 use yii\widgets\ActiveForm;
 use app\models\FormQuestion;
@@ -218,11 +219,11 @@ class SiteController extends Controller
     }
     public function actionForm($formlistID)
     {
-        $formTitle = Formlist::find()->where(['FORMLISTID' => $formlistID])->one();
+        $formlist = Formlist::find()->where(['FORMLISTID' => $formlistID])->one();
         $data;$value;$id;
         $model = new Country();
         if(isset($formlistID)){
-            $id = $formlistID ;
+            $modelForm = Form::find()->where(['FORMLISTID' => $formlistID])->one();
             $data = $model->question($formlistID);
             $value = $model->checkbox($formlistID);
         }else{
@@ -231,16 +232,17 @@ class SiteController extends Controller
         $modelsFormQuestion = new FormQuestion;
         $modelsFormQuestionOption = new FormQuestionOption;
         $modelsFormAnswerDetail = new FormAnswerDetail();
-        return $this->render('form',['FormAnswerDetail' => $modelsFormAnswerDetail,'data' => $data,'value' => $value, 'formTitle' => $formTitle,'formListID' =>$id]);
+        return $this->render('form',['FormAnswerDetail' => $modelsFormAnswerDetail,'data' => $data,'value' => $value, 'formlist' => $formlist,'formID' =>$modelForm['FORMID']]);
     }
-    public function actionCoba(){
+    public function actionAnswer(){
         $modelFormAnswer = new FormAnswerDetail;
         $model = new Country();
         $data = $model->questionID();
         $answerDetailValue;$idFormAnswer;
-        $formlistID;
-        if(isset($_GET['id'])){
-            $formlistID = $_GET['id'];
+        $formID;
+        if(isset($_GET['formID'])){
+            $formID = $_GET['formID'];
+            $formTitle = $_GET['formTitle'];
         }
         //if($modelFormAnswer->load(Yii::$app->request->post())){
             //ini $trash cuman untuk mneampung, sama halnya dengan trash dibawahnya
@@ -268,20 +270,20 @@ class SiteController extends Controller
                         $allValue = $allValue .",". $value;
                     }
                     if($counter == 0){
-                        $model->insertAnswer($tmpCount,$idFormAnswer,$loop['ID'],$allValue,$formlistID);
+                        $model->insertAnswer($tmpCount,$idFormAnswer,$loop['ID'],$allValue,$formID);
                     }else{
                         $model->insertAnswerDetail($tmpCount,$idFormAnswer,$loop['ID'],$answerDetailValue);
                     }
                     // echo $allValue;
                 }else if($counter == 0){
-                     $model->insertAnswer($tmpCount,$idFormAnswer,$loop['ID'],$answerDetailValue,$formlistID);
+                    $model->insertAnswer($tmpCount,$idFormAnswer,$loop['ID'],$answerDetailValue,$formID);
                 }else{
                     $model->insertAnswerDetail($tmpCount,$idFormAnswer,$loop['ID'],$answerDetailValue);
                 }
                 $tmpCount++;$counter++;
                 }
             }
-            //return $this->render('coba',['tmp' => $tmp]);
+            return $this->render('success', ['formTitle' => $formTitle]);
         //}
     }
     public function actionForms()

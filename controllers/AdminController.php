@@ -85,10 +85,6 @@ class AdminController extends Controller
      */
     public function actionView($id)
     {
-        // $id = (new \yii\db\Query())
-        //     ->from('FORM')
-        //     ->where(['FORMID' => $id])->one()['FORMLISTID'];
-
         return $this->render('view', [
             'modelFormList' => $this->findModel($id),
         ]);
@@ -229,11 +225,7 @@ class AdminController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate($id)
-    {
-        // $id = (new \yii\db\Query())
-        //     ->from('FORM')
-        //     ->where(['FORMID' => $id])->one()['FORMLISTID'];
-            
+    {            
         $modelFormList = $this->findModel($id);
         $modelsFormQuestion = FormQuestion::find()->where(['FORMLISTID' => $modelFormList->FORMLISTID])->orderBy(['FORMQUESTIONPOSITION' => SORT_ASC])->all();
         $modelsFormQuestionOption = [];

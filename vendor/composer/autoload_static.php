@@ -42,6 +42,10 @@ class ComposerStaticInit2f157d9eab107447d5d61cc5eb9a0138
         array (
             'phpDocumentor\\Reflection\\' => 25,
         ),
+        'k' => 
+        array (
+            'kv4nt\\owlcarousel\\' => 18,
+        ),
         'd' => 
         array (
             'dosamigos\\chartjs\\' => 18,
@@ -151,6 +155,10 @@ class ComposerStaticInit2f157d9eab107447d5d61cc5eb9a0138
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
             1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
             2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+        ),
+        'kv4nt\\owlcarousel\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kv4nt/yii2-owl-carousel2',
         ),
         'dosamigos\\chartjs\\' => 
         array (

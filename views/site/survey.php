@@ -28,7 +28,7 @@ $this->title = 'UMN SURVEY';
                                 <img src="assets/img/visit/visit_1.jpg" alt="">
                             </div>
                             <div class="visited-cap">
-                                <h3><a href="<?= Url::toRoute(['site/form', 'formlistid' => $formlist->FORMLISTID])?>"><?= $formlist->FORMLISTTITLE?></a></h3>
+                                <h3><a href="<?= Url::toRoute(['site/form', 'formlistID' => $formlist->FORMLISTID])?>"><?= $formlist->FORMLISTTITLE?></a></h3>
                                 <!-- <p>Email Marketing</p> -->
                             </div>
                         </div>
