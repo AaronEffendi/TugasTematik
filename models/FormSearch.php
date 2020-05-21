@@ -5,12 +5,14 @@ namespace app\models;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\Form;
+use app\models\FormList;
 
 /**
  * FormSearch represents the model behind the search form of `app\models\Form`.
  */
 class FormSearch extends Form
 {
+    public $FORMLISTTITLE;
     /**
      * {@inheritdoc}
      */
@@ -18,7 +20,7 @@ class FormSearch extends Form
     {
         return [
             [['FORMID', 'FORMLISTID'], 'number'],
-            [['FORMDATESTART', 'FORMDATEEND'], 'safe'],
+            [['FORMDATESTART', 'FORMDATEEND', 'FORMLISTTITLE'], 'safe'],
         ];
     }
 
@@ -40,13 +42,23 @@ class FormSearch extends Form
      */
     public function search($params)
     {
-        $query = Form::find();
+        $query = Form::find()
+            ->select([
+                'FORM.FORMID', 'FORM.FORMDATESTART', 'FORM.FORMDATEEND', 'FORM.USERJOBID',
+                'FORMLIST.FORMLISTID', 'FORMLIST.FORMLISTTOTALSECTION', 
+                'FORMLIST.FORMLISTTOTALQUESTION', 'FORMLIST.FORMLISTTITLE'])
+            ->joinWith(['formlist']);
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+
+        $dataProvider->sort->attributes['FORMLISTTITLE'] = [
+            'asc' => ['FORMLISTTITLE' => SORT_ASC],
+            'desc' => ['FORMLISTTITLE' => SORT_DESC]
+        ];
 
         $this->load($params);
 
@@ -58,12 +70,13 @@ class FormSearch extends Form
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'FORMID' => $this->FORMID,
-            'FORMLISTID' => $this->FORMLISTID,
+            'FORM.FORMID' => $this->FORMID,
+            'FORM.FORMLISTID' => $this->FORMLISTID,
         ]);
 
         $query->andFilterWhere(['like', 'FORMDATESTART', $this->FORMDATESTART])
-            ->andFilterWhere(['like', 'FORMDATEEND', $this->FORMDATEEND]);
+            ->andFilterWhere(['like', 'FORMDATEEND', $this->FORMDATEEND])
+            ->andFilterWhere(['like', 'FORMLISTTITLE', $this->FORMLISTTITLE]);
 
         return $dataProvider;
     }

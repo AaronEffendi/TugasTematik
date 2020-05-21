@@ -11,6 +11,10 @@ class LoginController extends \yii\web\Controller
 
     public function actionIndex()
     {
+        if(Yii::$app->session->get('role') != NULL){
+            return $this->redirect(['site/index']);
+        }
+        
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }

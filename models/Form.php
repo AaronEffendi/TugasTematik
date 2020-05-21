@@ -52,4 +52,8 @@ class Form extends \yii\db\ActiveRecord
             'FORMDATEEND' => 'End Date',
         ];
     }
+    
+    public function getFormlist(){
+        return $this->hasOne(FormList::className(), ['FORMLISTID' => 'FORMLISTID']);
+    }
 }

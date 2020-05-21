@@ -80,16 +80,25 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $role = Yii::$app->session->get('role');
+        $roleID = 1;
+        
+        if(Yii::$app->session->get('role') != NULL)
+            $roleID = Yii::$app->session->get('role');
+        
+        echo "ROLE: $roleID";
         $model = Formlist::find()->all();
         $data = array();
         $modelFormPublish = FormPublish::find()->all();
         // $modelFormAnswer = FormAnswer::find()->where(['FORMID' => $modelFormPublish[0]->FORMID])->all();
 
         $graph = array();
+        $forRole = array();
         foreach($modelFormPublish as $formPublish){
             if(empty($graph["$formPublish[FORMID]"])){
                 $graph["$formPublish[FORMID]"] = array();
+            }
+            if(empty($role["$formPublish[FORMQUESTIONID]"])){
+                $forRole["$formPublish[FORMQUESTIONID]"] = array();
             }
             
             $formQuestionOption = FormQuestionOption::find()
@@ -110,11 +119,29 @@ class SiteController extends Controller
 
             $graph["$formPublish[FORMID]"]["$formPublish[FORMQUESTIONID]"] = $countArray;
 
+            if($formPublish["PUBLICS"] == 1){
+                array_push($forRole["$formPublish[FORMQUESTIONID]"], 1);
+            }
+            if($formPublish["LECTURER"] == 1){
+                array_push($forRole["$formPublish[FORMQUESTIONID]"], 2);
+            }
+            if($formPublish["STUDENT"] == 1){
+                array_push($forRole["$formPublish[FORMQUESTIONID]"], 3);
+            }
+            if($formPublish["STAFF"] == 1){
+                array_push($forRole["$formPublish[FORMQUESTIONID]"], 4);
+            }
         }
 
+        // echo "<pre>";
+        // print_r($forRole[70]);
+        // echo "<pre>";
         return $this->render('index',[
             'data' => $model,
-            'graph' => $graph]);
+            'graph' => $graph,
+            'modelFormPublish' => $modelFormPublish,
+            'forRole' => $forRole,
+            'roleID' => $roleID]);
     }
 
     /**
@@ -147,6 +174,7 @@ class SiteController extends Controller
     public function actionLogout()
     {
         Yii::$app->user->logout();
+        Yii::$app->session->remove('role');
 
         return $this->goHome();
     }

@@ -29,11 +29,13 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $modelFormList,
         'attributes' => [
+            // 'FORMID',
             'FORMLISTID',
             'FORMLISTTITLE',
             'FORMLISTDATE',
             'FORMLISTTOTALSECTION',
             'FORMLISTTOTALQUESTION',
+            // 'USERJOBID'
         ],
     ]) ?>
 

@@ -35,12 +35,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         ]);
                     },
                 ],
-                'urlCreator' => function ($action, $model, $key, $index) {
-                    if ($action === 'answer') {
-                        $url = Url::to(['admin/answer', 'id' => $index + 1]); // your own url generation logic
-                        return $url;
-                    }
-                }
+                // 'urlCreator' => function ($action, $model, $key, $index) {
+                //     if ($action === 'answer') {
+                //         $url = Url::to(['admin/answer', 'id' => $index + 1]); // your own url generation logic
+                //         return $url;
+                //     }
+                // }
             ],
         ],
     ]); ?>

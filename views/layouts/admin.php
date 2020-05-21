@@ -32,7 +32,8 @@ DashboardAsset::register($this);
 			<a class="sidebar-brand" href="#"><i class="align-middle" data-feather="box"></i><span class="align-middle">UMN  SURVEY</span></a>
             <ul class="sidebar-nav">
                 <li class="sidebar-item active"><?= Html::a('Home', ['admin/index'], ['class' => 'sidebar-link']) ?></li>
-                <li class="sidebar-item"><?= Html::a('Create', ['admin/create'], ['class' => 'sidebar-link']) ?></li>
+                <li class="sidebar-item"><?= Html::a('Create New', ['admin/create'], ['class' => 'sidebar-link']) ?></li>
+                <li class="sidebar-item"><?= Html::a('Create Using Template', ['admin/template'], ['class' => 'sidebar-link']) ?></li>
                 <li class="sidebar-item"><?= Html::a('Spread Out', ['admin/spread'], ['class' => 'sidebar-link']) ?></li>
                 <li class="sidebar-item"><?= Html::a('Result', ['admin/result'], ['class' => 'sidebar-link']) ?></li>
             </ul>

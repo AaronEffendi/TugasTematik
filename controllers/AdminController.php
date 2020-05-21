@@ -50,10 +50,21 @@ class AdminController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new FormListSearch();
+        $searchModel = new FormSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionTemplate()
+    {
+        $searchModel = new FormListSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('template', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -74,6 +85,10 @@ class AdminController extends Controller
      */
     public function actionView($id)
     {
+        // $id = (new \yii\db\Query())
+        //     ->from('FORM')
+        //     ->where(['FORMID' => $id])->one()['FORMLISTID'];
+
         return $this->render('view', [
             'modelFormList' => $this->findModel($id),
         ]);
@@ -137,11 +152,6 @@ class AdminController extends Controller
                 $modelForm->save();
                 $transaction->commit();
                 
-                echo "<pre>";
-                print_r($modelForm);
-                print_r($modelFormList);
-                echo "</pre>";
-                
                 try {
                     if ($flag = $modelFormList->save(false)) {
                         foreach ($modelsFormQuestion as $indexFormList => $modelFormQuestion) {
@@ -192,6 +202,25 @@ class AdminController extends Controller
         ]);
     }
 
+    public function actionAdd($id){
+        $modelForm = new Form;
+        $modelFormList = (new \yii\db\Query())
+            ->from('FORMLIST')
+            ->where(['FORMLISTID' => $id])->one();
+        
+        $transaction = Yii::$app->db->beginTransaction();
+        $modelForm->FORMLISTID = $modelFormList['FORMLISTID'];
+        $modelForm->FORMDATESTART = date('d-M-y');
+        $modelForm->FORMDATEEND = date('d-M-y');
+        $modelForm->USERJOBID = 3;
+        
+        $modelForm->save();
+        $transaction->commit();
+        echo "<script>alert('Template $modelFormList[FORMLISTTITLE] has been used.');</script>";
+
+        return $this->redirect(['admin/index']);
+    }
+
     /**
      * Updates an existing FormList model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -201,6 +230,10 @@ class AdminController extends Controller
      */
     public function actionUpdate($id)
     {
+        // $id = (new \yii\db\Query())
+        //     ->from('FORM')
+        //     ->where(['FORMID' => $id])->one()['FORMLISTID'];
+            
         $modelFormList = $this->findModel($id);
         $modelsFormQuestion = FormQuestion::find()->where(['FORMLISTID' => $modelFormList->FORMLISTID])->orderBy(['FORMQUESTIONPOSITION' => SORT_ASC])->all();
         $modelsFormQuestionOption = [];
