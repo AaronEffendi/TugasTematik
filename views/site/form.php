@@ -45,7 +45,19 @@ use yii\widgets\ActiveForm;
                             </div>
                         </div>
                     </div>
-                <?php } ?>
+                <?php }?>
+                <?php } else if($row['ID_TYPE'] == 7){?>
+                    <div class="card mb-3 p-5">
+                        <div class="card-body">
+                            <h3 class="card-title"><?= Html::encode($row['NAME'])?></h3>
+                            <p class="card-text"><?= Html::encode($row['DESCRIPTION'])?></p>
+                            <div class="md-form form-lg">
+                                <?php for($i = 1 ; $i <= 5 ;$i++){?>
+                                    <input type="radio" name="<?= Html::encode($row['ID'])?>" value="<?= Html::encode($i)?>">
+                                <?php }?>
+                            </div>
+                        </div>
+                    </div>
             <?php } else  {?>
                 <div class="card mb-3 p-5">
                     <div class="card-body">
@@ -62,7 +74,7 @@ use yii\widgets\ActiveForm;
                                             echo 'checkbox';
                                         }
                                         ?>" 
-                                        id="<?= Html::encode($row['ID'])?>" name="<?= Html::encode($row['ID'])?>">
+                                        id="<?= Html::encode($row['ID'])?>" value="<?= Html::encode($tmp['VAL'])?>"name="<?= Html::encode($row['ID'])?>[]">
                                         <label for=""><?= Html::encode($tmp['VAL'])?></label><br>
                                     <!-- </div> -->
                             <?php }?>
