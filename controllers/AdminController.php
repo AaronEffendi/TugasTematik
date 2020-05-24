@@ -145,6 +145,7 @@ class AdminController extends Controller
                 $modelForm->FORMDATESTART = date('d-M-y');
                 $modelForm->FORMDATEEND = date('d-M-y');
                 $modelForm->USERJOBID = 3;
+                $modelForm->FORMSTATUS = 1;
                 $modelForm->save();
                 $transaction->commit();
                 
@@ -209,6 +210,7 @@ class AdminController extends Controller
         $modelForm->FORMDATESTART = date('d-M-y');
         $modelForm->FORMDATEEND = date('d-M-y');
         $modelForm->USERJOBID = 3;
+        $modelForm->FORMSTATUS = 1;
         
         $modelForm->save();
         $transaction->commit();
@@ -559,7 +561,7 @@ class AdminController extends Controller
                     [
                         'FORMID' => $modelFormPublish->FORMID,
                         'FORMQUESTIONID' => $modelFormPublish->FORMQUESTIONID,
-                    ],)->execute();
+                    ])->execute();
                     $transaction->commit();
                 }
 
@@ -614,5 +616,28 @@ class AdminController extends Controller
             //     //         $countArray[$keys[$x]] untuk generate COUNT (jumlah orang yg pilih) optionValue tsb (nilai untuk sumbu Y)
             // } 
         ]);
+    }
+
+    
+    public function actionStatus($id)
+    {
+        $query = new \yii\db\Query;
+        $query
+            ->select('FORMSTATUS')
+            ->from('FORM')
+            ->where(['FORMID'=>$id]);
+        $command = $query->createCommand();
+        $status = $command->queryOne();
+        if($status['FORMSTATUS'] == 1){
+            Yii::$app->db->createCommand()->update('FORM', ['FORMSTATUS' => 0], 'FORMID = '.$id)
+                ->execute();
+            
+            Yii::$app->db->createCommand()->update('FORM', ['FORMDATEEND' => date('d-M-y')], 'FORMID = '.$id)
+                ->execute();    
+        }else{
+            Yii::$app->db->createCommand()->update('FORM', ['FORMSTATUS' => 1], 'FORMID = '.$id)
+                ->execute();
+        }    
+        return $this->redirect(['admin/spread']);
     }
 }
