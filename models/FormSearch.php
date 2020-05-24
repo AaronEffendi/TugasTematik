@@ -47,7 +47,8 @@ class FormSearch extends Form
                 'FORM.FORMID', 'FORM.FORMDATESTART', 'FORM.FORMDATEEND', 'FORM.USERJOBID', 'FORM.FORMSTATUS',
                 'FORMLIST.FORMLISTID', 'FORMLIST.FORMLISTTOTALSECTION', 
                 'FORMLIST.FORMLISTTOTALQUESTION', 'FORMLIST.FORMLISTTITLE'])
-            ->joinWith(['formlist']);
+            ->joinWith(['formlist'])
+            ->where(['FORM.FORMSTATUS' => 1]);
 
         // add conditions that should always apply here
 

@@ -18,6 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?= Html::a('<span class="btn-label">Download</span>', ['admin/excel', 'id' => $id], ['class' => 'btn btn-primary']) ?>
+    <?= " ".Html::a('Back', ['result'], ['class' => 'btn btn-danger']) ?>
 
     <br/><br/>
 

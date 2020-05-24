@@ -39,7 +39,7 @@ class AdminController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['GET'],
                 ],
             ],
         ];
@@ -361,7 +361,19 @@ class AdminController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $formAnswerId = FormAnswer::find()
+                        ->select(['FORMANSWERID'])
+                        ->where(['FORMID' => $id])
+                        ->all();
+        if($formAnswerId != null){
+            foreach($formAnswerId as $answerId){
+                FormAnswerDetail::deleteAll(['FORMANSWERID' => $answerId['FORMANSWERID']]);
+            }
+            FormAnswer::deleteAll(['FORMID' => $id]);
+        }
+        
+        FormPublish::deleteAll(['FORMID' => $id]);
+        Form::deleteAll(['FORMID' => $id]);
 
         return $this->redirect(['index']);
     }
@@ -445,7 +457,11 @@ class AdminController extends Controller
                 // $answers["$row[USEREMAIL]"]["FORMQUESTIONNAME"] = array();
                 // $answers["$row[USEREMAIL]"]["FORMANSWERDETAILVALUE"] = array();
             } 
-            $answers["$row[USEREMAIL]"]["$row[FORMQUESTIONNAME]"] = $row["FORMANSWERDETAILVALUE"];
+            if(empty($answers["$row[USEREMAIL]"]["$row[FORMQUESTIONNAME]"])){
+                $answers["$row[USEREMAIL]"]["$row[FORMQUESTIONNAME]"] = $row["FORMANSWERDETAILVALUE"];
+            }else{
+                $answers["$row[USEREMAIL]"]["$row[FORMQUESTIONNAME]"] = $answers["$row[USEREMAIL]"]["$row[FORMQUESTIONNAME]"].", ".$row["FORMANSWERDETAILVALUE"];
+            }
             // array_push($answers["$row[USEREMAIL]"]["FORMANSWERDETAILVALUE"], $row["FORMANSWERDETAILVALUE"]);
         }
 
@@ -635,7 +651,7 @@ class AdminController extends Controller
         $isPublished = FormPublish::find()   
         ->where([
             'FORMQUESTIONID' => $formQuestionID,
-            'FORMID' => $formID,
+            // 'FORMID' => $formID,
             'TREND' => 1])->one();
 
         if ($modelFormPublish->load(Yii::$app->request->post())){
@@ -657,7 +673,6 @@ class AdminController extends Controller
 
                     ], 
                     [
-                        'FORMID' => $modelFormPublish->FORMID,
                         'FORMQUESTIONID' => $modelFormPublish->FORMQUESTIONID,
                     ],)->execute();
                     $transaction->commit();
@@ -711,6 +726,7 @@ class AdminController extends Controller
             'modelFormPublish' => $modelFormPublish,
             'isPublished' => $isPublished,
         ]);
+    }
     
     public function actionStatus($id)
     {

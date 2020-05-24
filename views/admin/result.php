@@ -23,6 +23,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'FORMID',
             'FORMLISTID',
+            [
+                'attribute' => 'FORMLISTTITLE',
+                'value' => 'formlist.FORMLISTTITLE',
+            ],
             'FORMDATESTART',
             'FORMDATEEND',
 

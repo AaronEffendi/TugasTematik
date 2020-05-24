@@ -101,6 +101,8 @@ use app\models\UserJob;
         <?= Html::submitButton('Publish Chart', ['class' => 'btn btn-primary']) ?>
     <?php ActiveForm::end(); ?>
 
+    <?= "<br>".Html::a('Back', ['answer', 'id' => $formID], ['class' => 'btn btn-danger'])."<br><br><br>" ?>
+    
     <?=
         $chart = ChartJs::widget([
             'type' => 'line',
