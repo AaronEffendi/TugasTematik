@@ -19,7 +19,7 @@ class FormSearch extends Form
     public function rules()
     {
         return [
-            [['FORMID', 'FORMLISTID'], 'number'],
+            [['FORMID', 'FORMLISTID','FORMSTATUS'], 'number'],
             [['FORMDATESTART', 'FORMDATEEND', 'FORMLISTTITLE'], 'safe'],
         ];
     }

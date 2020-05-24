@@ -11,6 +11,7 @@ use Yii;
  * @property float $FORMLISTID
  * @property string $FORMDATESTART
  * @property string $FORMDATEEND
+ * @property float $FORMSTATUS
  */
 class Form extends \yii\db\ActiveRecord
 {

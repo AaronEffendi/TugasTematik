@@ -146,6 +146,7 @@ class AdminController extends Controller
                 $modelForm->FORMDATESTART = date('d-M-y');
                 $modelForm->FORMDATEEND = date('d-M-y');
                 $modelForm->USERJOBID = 3;
+                $modelForm->FORMSTATUS = 1;
                 $modelForm->save();
                 $transaction->commit();
                 
@@ -210,6 +211,7 @@ class AdminController extends Controller
         $modelForm->FORMDATESTART = date('d-M-y');
         $modelForm->FORMDATEEND = date('d-M-y');
         $modelForm->USERJOBID = 3;
+        $modelForm->FORMSTATUS = 1;
         
         $modelForm->save();
         $transaction->commit();
@@ -504,7 +506,7 @@ class AdminController extends Controller
      */
     public function actionSpread()
     {
-        $searchModel = new FormListSearch();
+        $searchModel = new FormSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('spread', [
@@ -566,7 +568,7 @@ class AdminController extends Controller
                     [
                         'FORMID' => $modelFormPublish->FORMID,
                         'FORMQUESTIONID' => $modelFormPublish->FORMQUESTIONID,
-                    ],)->execute();
+                    ])->execute();
                     $transaction->commit();
                 }
 
@@ -709,5 +711,26 @@ class AdminController extends Controller
             'modelFormPublish' => $modelFormPublish,
             'isPublished' => $isPublished,
         ]);
+    
+    public function actionStatus($id)
+    {
+        $query = new \yii\db\Query;
+        $query
+            ->select('FORMSTATUS')
+            ->from('FORM')
+            ->where(['FORMID'=>$id]);
+        $command = $query->createCommand();
+        $status = $command->queryOne();
+        if($status['FORMSTATUS'] == 1){
+            Yii::$app->db->createCommand()->update('FORM', ['FORMSTATUS' => 0], 'FORMID = '.$id)
+                ->execute();
+            
+            Yii::$app->db->createCommand()->update('FORM', ['FORMDATEEND' => date('d-M-y')], 'FORMID = '.$id)
+                ->execute();    
+        }else{
+            Yii::$app->db->createCommand()->update('FORM', ['FORMSTATUS' => 1], 'FORMID = '.$id)
+                ->execute();
+        }    
+        return $this->redirect(['admin/spread']);
     }
 }

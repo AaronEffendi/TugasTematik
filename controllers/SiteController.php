@@ -328,16 +328,23 @@ class SiteController extends Controller
                 if(isset($_POST[$loop['ID']])){
                 $answerDetailValue = $_POST[$loop['ID']];
                 // check apakah ada banyak jawaban atau hanya satu jawaban
+
                 if(is_array($answerDetailValue)){
                     $allValue = '';
+                    $index = 0 ;
                     foreach($answerDetailValue as $value){
                         // echo $value;
+                        if($index == 0){
+                            $allValue = $value;
+                            $index = 1;
+                        }else{
                         $allValue = $allValue .",". $value;
+                        }
                     }
                     if($counter == 0){
                         $model->insertAnswer($tmpCount,$idFormAnswer,$loop['ID'],$allValue,$formID);
                     }else{
-                        $model->insertAnswerDetail($tmpCount,$idFormAnswer,$loop['ID'],$answerDetailValue);
+                        $model->insertAnswerDetail($tmpCount,$idFormAnswer,$loop['ID'],$allValue);
                     }
                     // echo $allValue;
                 }else if($counter == 0){
