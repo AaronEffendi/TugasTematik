@@ -75,7 +75,7 @@ $config = [
     //     ],
     // ],
     'params' => $params,
-    'defaultRoute' => 'admin/index' //login
+    'defaultRoute' => 'site/index' //login
 
 ];
 

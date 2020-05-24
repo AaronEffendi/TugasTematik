@@ -3,19 +3,26 @@
 /* @var $this yii\web\View */
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\widgets\Pjax;
 $this->title = 'UMN SURVEY';
 ?>
 
 <main>
     <!-- Visit Stuffs Start -->
-    <div class="visit-area fix visite-padding">
+    <div class="visit-area fix visite-padding" style="padding-top: 60px;">
         <div class="container">
             <!-- Section-tittle -->
             <div class="row d-flex justify-content-left">
                 <div class="col-lg-6 pr-0">
                     <div class="section-tittle">
-                        <h2>List Of Survey</h2>
+                        <h2 class="mb-5">List Of Survey</h2>
                     </div>
+                </div>
+            </div>
+            <div class="input-group mb-4 row d-flex">
+                <input type="text" class="form-control" placeholder="Survey name">
+                <div class="header-right-btn f-right d-none d-lg-block">
+                    <button class="btn header-btn" type="button">Search</button>
                 </div>
             </div>
         </div>

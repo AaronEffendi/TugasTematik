@@ -46,7 +46,18 @@ use yii\widgets\ActiveForm;
                         </div>
                     </div>
                 <?php } ?>
-            <?php } else  {?>
+            <?php } else if($row['ID_TYPE'] == 7){?>
+                    <div class="card mb-3 p-5">
+                        <div class="card-body">
+                            <h3 class="card-title"><?= Html::encode($row['NAME'])?></h3>
+                            <p class="card-text"><?= Html::encode($row['DESCRIPTION'])?></p>
+                                <?php for ($x = 1; $x <= 5; $x++) { ?>
+                                    <input type="radio" class="input sm" id="<?= Html::encode($row['ID'])?>" name="<?= Html::encode($row['ID'])?>">
+                                    <label class="pr-5" for=""><?php echo $x ?></label>
+                                <?php } ?>
+                        </div>
+                    </div>
+                <?php } else  {?>
                 <div class="card mb-3 p-5">
                     <div class="card-body">
                         <h3 class="card-title"><?= Html::encode($row['NAME'])?></h3>
@@ -71,6 +82,6 @@ use yii\widgets\ActiveForm;
                 </div>
             <?php } ?>
         <?php endforeach;?>
-    <?= Html::submitButton('Submit Your Answer', ['class' => 'btn btn-primary']) ?>
+    <?= Html::submitButton('Submit Your Answer', ['class' => 'btn btn-primary mb-3']) ?>
     </form>
 </div>

@@ -27,48 +27,29 @@ $this->title = 'UMN SURVEY';
     <!-- Slider Area Start-->
     <div class="slider-area ">
         <div class="slider-active">
-            <div class="single-slider slider-height d-flex align-items-center" data-background="assets/img/hero/h1_hero.png">
-                <div class="container">
-                    <div class="row d-flex align-items-center">
-                        <div class="col-lg-7 col-md-9 ">
-                            <div class="hero__caption">
-                                <h1 data-animation="fadeInLeft" data-delay=".4s">Satisfaction<br> Survey</h1>
-                                <p data-animation="fadeInLeft" data-delay=".6s">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravi.</p>
-                                <!-- Hero-btn -->
-                                <div class="hero__btn" data-animation="fadeInLeft" data-delay=".8s">
-                                    <a href="<?= Url::toRoute('site/index')?>#recentform" class="btn hero-btn">MORE INFO</a>
+            <?php foreach($data as $form) :?>
+                <div class="single-slider slider-height d-flex align-items-center" data-background="assets/img/hero/h1_hero.png">
+                    <div class="container">
+                        <div class="row d-flex align-items-center">
+                            <div class="col-lg-7 col-md-9 ">
+                                <div class="hero__caption">
+                                    <h1 data-animation="fadeInLeft" data-delay=".4s"><?= $form->FORMLISTTITLE?></h1>
+                                    <p data-animation="fadeInLeft" data-delay=".6s">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravi.</p>
+                                    <!-- Hero-btn -->
+                                    <div class="hero__btn" data-animation="fadeInLeft" data-delay=".8s">
+                                        <a href="<?= Url::toRoute('site/index')?>#recentform" class="btn hero-btn">MORE INFO</a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-lg-5">
-                            <div class="hero__img d-none d-lg-block" data-animation="fadeInRight" data-delay="1s">
-                                <img src="assets/img/hero/hero_right.png" alt="">
+                            <div class="col-lg-5">
+                                <div class="hero__img d-none d-lg-block" data-animation="fadeInRight" data-delay="1s">
+                                    <img src="assets/img/hero/hero_right.png" alt="">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="single-slider slider-height d-flex align-items-center" data-background="assets/img/hero/h1_hero.png">
-                <div class="container">
-                    <div class="row d-flex align-items-center">
-                        <div class="col-lg-7 col-md-9 ">
-                            <div class="hero__caption">
-                                <h1 data-animation="fadeInLeft" data-delay=".4s">Facilities Survey</h1>
-                                <p data-animation="fadeInLeft" data-delay=".6s">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravi.</p>
-                                <!-- Hero-btn -->
-                                <div class="hero__btn" data-animation="fadeInLeft" data-delay=".8s">
-                                    <a href="index.html#recentform" class="btn hero-btn">MORE INFO</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-5">
-                            <div class="hero__img d-none d-lg-block" data-animation="fadeInRight" data-delay="1s">
-                                <img src="assets/img/hero/hero_right.png" alt="">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <?php endforeach;?>
         </div>
     </div>
     <!-- Slider Area End-->
