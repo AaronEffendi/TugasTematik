@@ -500,7 +500,7 @@ class AdminController extends Controller
      */
     public function actionSpread()
     {
-        $searchModel = new FormListSearch();
+        $searchModel = new FormSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('spread', [
