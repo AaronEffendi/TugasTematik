@@ -51,6 +51,7 @@ use app\models\UserJob;
         //         $countArray[$keys[$x]] untuk generate COUNT (jumlah orang yg pilih) optionValue tsb (nilai untuk sumbu Y)
     }
 
+
     if($formQuestion->FORMQUESTIONTYPEID == 3 || $formQuestion->FORMQUESTIONTYPEID == 5){ // Multiple choice - Pie
         $type = 'pie';
         $datasets = null;
@@ -91,7 +92,7 @@ use app\models\UserJob;
             ],
         ];
     }
-    elseif($formQuestion->FORMQUESTIONTYPEID == 7){ // Linear Scale - Vertical bar
+    elseif($formQuestion->FORMQUESTIONTYPEID == 6){ // Linear Scale - Vertical bar
         $type = 'bar';
         $datasets = null;
         $datasets[0] = [
@@ -136,6 +137,10 @@ use app\models\UserJob;
     // print_r($data);
     // echo "datasets <br>";
     // print_r($datasets);
+    // echo "countArray <br>";
+    // print_r($countArray);
+    // echo "keys <br>";
+    // print_r($keys);
     // echo "</pre>";
     //
     ///////////////////////////////////
@@ -187,3 +192,35 @@ use app\models\UserJob;
             'clientOptions' =>  $clientOptions,
         ]);
     ?>
+
+<?= ChartJs::widget([
+    'type' => 'line',
+    'options' => [
+    ],
+    'data' => [
+        'labels' => ["January", "February", "March", "April", "May", "June", "July"],
+        'datasets' => [
+            [
+                'label' => "My First dataset",
+                'backgroundColor' => "rgba(179,181,198,0.2)",
+                'borderColor' => "rgba(179,181,198,1)",
+                'pointBackgroundColor' => "rgba(179,181,198,1)",
+                'pointBorderColor' => "#fff",
+                'pointHoverBackgroundColor' => "#fff",
+                'pointHoverBorderColor' => "rgba(179,181,198,1)",
+                'data' => [65, 59, 90, 81, 56, 55, 40]
+            ],
+            [
+                'label' => "My Second dataset",
+                'backgroundColor' => "rgba(255,99,132,0.2)",
+                'borderColor' => "rgba(255,99,132,1)",
+                'pointBackgroundColor' => "rgba(255,99,132,1)",
+                'pointBorderColor' => "#fff",
+                'pointHoverBackgroundColor' => "#fff",
+                'pointHoverBorderColor' => "rgba(255,99,132,1)",
+                'data' => [28, 48, 40, 19, 96, 27, 100]
+            ]
+        ]
+    ]
+]);
+?>

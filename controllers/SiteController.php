@@ -89,7 +89,7 @@ class SiteController extends Controller
         echo "ROLE: $roleID";
         $model = Formlist::find()->all();
         $data = array();
-        $modelFormPublish = FormPublish::find()->all();
+        $modelFormPublish = FormPublish::find()->where(['TREND' => 0])->all();
         // $modelFormAnswer = FormAnswer::find()->where(['FORMID' => $modelFormPublish[0]->FORMID])->all();
 
         $graph = array();
@@ -98,7 +98,7 @@ class SiteController extends Controller
             if(empty($graph["$formPublish[FORMID]"])){
                 $graph["$formPublish[FORMID]"] = array();
             }
-            if(empty($role["$formPublish[FORMQUESTIONID]"])){
+            if(empty($forRole["$formPublish[FORMQUESTIONID]"])){
                 $forRole["$formPublish[FORMQUESTIONID]"] = array();
             }
             
@@ -133,16 +133,81 @@ class SiteController extends Controller
                 array_push($forRole["$formPublish[FORMQUESTIONID]"], 4);
             }
         }
+        
+        $modelFormTrend = FormPublish::find()->where(['TREND' => 1])->all();
+        $graphTrend = array();
+        $forRoleTrend = array();
+        $countArray = array();
+        $month_keys = array();
+        $months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+        foreach($modelFormTrend as $formTrend){
+            if(empty($graphTrend["$formTrend[FORMID]"])){
+                $graphTrend["$formTrend[FORMID]"] = array();
+            }
+            if(empty($forRoleTrend["$formTrend[FORMQUESTIONID]"])){
+                $forRoleTrend["$formTrend[FORMQUESTIONID]"] = array();
+            }
+            
+            $formQuestionOption = FormQuestionOption::find()
+                ->where(['FORMQUESTIONID' => $formTrend->FORMQUESTIONID])->all();
+
+            $countArray = [];
+            foreach($formQuestionOption as $formOption){
+                foreach($months as $month){
+                    $countArray["$formOption->FORMQUESTIONVALUE"][$month] = 0; // Awalnya diinisialisasi 0 semua
+                }
+            }
+
+            $keys = array_keys( $countArray ); 
+            $month_keys = array_keys( $countArray[$keys[0]]);
+            for($x = 0; $x < sizeof($keys); $x++ ) { 
+                for($y = 0; $y < sizeof($month_keys); $y++){
+                    // Masukin JUMLAH orang yang ngejawab pilihan A ke array A, dst.
+                    $countArray[$keys[$x]][$month_keys[$y]] += FormAnswerDetail::find()
+                                ->innerJoin('FORMANSWER', 'FORMANSWER.FORMANSWERID = FORMANSWERDETAIL.FORMANSWERID')
+                                ->innerJoin('FORM', 'FORM.FORMID = FORMANSWER.FORMID')
+                                ->where(["FORMANSWERDETAILVALUE" => $keys[$x], "UPPER(to_char(FORMDATESTART, 'Mon'))" => $month_keys[$y]])
+                                ->count();          
+                }
+            } 
+
+            $graphTrend["$formTrend[FORMID]"]["$formTrend[FORMQUESTIONID]"] = $countArray;
+
+            if($formTrend["PUBLICS"] == 1){
+                array_push($forRoleTrend["$formTrend[FORMQUESTIONID]"], 1);
+            }
+            if($formTrend["LECTURER"] == 1){
+                array_push($forRoleTrend["$formTrend[FORMQUESTIONID]"], 2);
+            }
+            if($formTrend["STUDENT"] == 1){
+                array_push($forRoleTrend["$formTrend[FORMQUESTIONID]"], 3);
+            }
+            if($formTrend["STAFF"] == 1){
+                array_push($forRoleTrend["$formTrend[FORMQUESTIONID]"], 4);
+            }
+
+        }
 
         // echo "<pre>";
-        // print_r($forRole[70]);
+        // print_r($forRoleTrend);
+        // print_r($graphTrend);
+        // print_r($graph);
+        // print_r($modelFormTrend);
         // echo "<pre>";
+        
         return $this->render('index',[
             'data' => $model,
             'graph' => $graph,
             'modelFormPublish' => $modelFormPublish,
             'forRole' => $forRole,
-            'roleID' => $roleID]);
+            'roleID' => $roleID,
+
+            'graphTrend' => $graphTrend,
+            'modelFormTrend' => $modelFormTrend,
+            'forRoleTrend' => $forRoleTrend,
+            'month_keys' => $month_keys,
+            'countArray' => $countArray,
+            ]);
     }
 
     /**
@@ -172,13 +237,13 @@ class SiteController extends Controller
      *
      * @return Response
      */
-    public function actionLogout()
-    {
-        Yii::$app->user->logout();
-        Yii::$app->session->remove('role');
+    // public function actionLogout()
+    // {    
+    //     Yii::$app->user->logout();
+    //     Yii::$app->session->set('role', 1);
 
-        return $this->goHome();
-    }
+    //     return $this->goHome();
+    // }
 
     /**
      * Displays contact page.

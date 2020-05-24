@@ -10,7 +10,7 @@ use app\models\FormList;
 /**
  * FormSearch represents the model behind the search form of `app\models\Form`.
  */
-class FormSearch extends Form
+class ResultSearch extends Form
 {
     public $FORMLISTTITLE;
     /**
@@ -47,7 +47,8 @@ class FormSearch extends Form
                 'FORM.FORMID', 'FORM.FORMDATESTART', 'FORM.FORMDATEEND', 'FORM.USERJOBID', 'FORM.FORMSTATUS',
                 'FORMLIST.FORMLISTID', 'FORMLIST.FORMLISTTOTALSECTION', 
                 'FORMLIST.FORMLISTTOTALQUESTION', 'FORMLIST.FORMLISTTITLE'])
-            ->joinWith(['formlist']);
+            ->joinWith(['formlist'])
+            ->where(['FORM.FORMSTATUS' => 0]);
 
         // add conditions that should always apply here
 
