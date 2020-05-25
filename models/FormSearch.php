@@ -19,7 +19,7 @@ class FormSearch extends Form
     public function rules()
     {
         return [
-            [['FORMID', 'FORMLISTID'], 'number'],
+            [['FORMID', 'FORMLISTID','FORMSTATUS'], 'number'],
             [['FORMDATESTART', 'FORMDATEEND', 'FORMLISTTITLE'], 'safe'],
         ];
     }
@@ -44,7 +44,7 @@ class FormSearch extends Form
     {
         $query = Form::find()
             ->select([
-                'FORM.FORMID', 'FORM.FORMDATESTART', 'FORM.FORMDATEEND', 'FORM.USERJOBID',
+                'FORM.FORMID', 'FORM.FORMDATESTART', 'FORM.FORMDATEEND', 'FORM.USERJOBID', 'FORM.FORMSTATUS',
                 'FORMLIST.FORMLISTID', 'FORMLIST.FORMLISTTOTALSECTION', 
                 'FORMLIST.FORMLISTTOTALQUESTION', 'FORMLIST.FORMLISTTITLE'])
             ->joinWith(['formlist']);

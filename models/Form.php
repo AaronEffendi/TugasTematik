@@ -11,6 +11,7 @@ use Yii;
  * @property float $FORMLISTID
  * @property string $FORMDATESTART
  * @property string $FORMDATEEND
+ * @property float $FORMSTATUS
  */
 class Form extends \yii\db\ActiveRecord
 {
@@ -33,7 +34,7 @@ class Form extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['FORMID', 'FORMLISTID'], 'number'],
+            [['FORMID', 'FORMLISTID','FORMSTATUS'], 'number'],
             [['FORMLISTID'], 'required'],
             // [['FORMDATESTART', 'FORMDATEEND'], 'string', 'max' => 7],
             [['FORMID'], 'unique'],
@@ -50,6 +51,7 @@ class Form extends \yii\db\ActiveRecord
             'FORMLISTID' => 'Form List ID',
             'FORMDATESTART' => 'Start Date',
             'FORMDATEEND' => 'End Date',
+            'FORMSTATUS' => 'Status',
         ];
     }
     
