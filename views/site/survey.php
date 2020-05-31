@@ -20,16 +20,16 @@ $this->title = 'UMN SURVEY';
                 </div>
             </div>
             <div class="input-group mb-4 row d-flex">
-                <input type="text" class="form-control" placeholder="Survey name">
+                <input id="searchbar" type="text" class="form-control" placeholder="Survey name">
                 <div class="header-right-btn f-right d-none d-lg-block">
-                    <button class="btn header-btn" type="button">Search</button>
+                    <button class="btn header-btn" type="button" onclick="searchForm()">Search</button>
                 </div>
             </div>
         </div>
         <div class="container-fluid p-0">
             <div class="row ">
                 <?php foreach($data as $formlist) :?>
-                    <div class="col-lg-3 col-md-4">
+                    <div id="formItem" class="col-lg-3 col-md-4">
                         <div class="single-visited mb-30">
                             <div class="visited-img">
                                 <img src="assets/img/visit/visit_1.jpg" alt="">
@@ -46,3 +46,19 @@ $this->title = 'UMN SURVEY';
     </div>
     <!-- Visit Stuffs Start -->
 </main>
+<script>
+    function searchForm() { 
+        let container = document.getElementsByClassName('col-lg-3 col-md-4'); 
+        let input = document.getElementById('searchbar').value.toLowerCase();
+        let x = document.getElementsByClassName('visited-cap'); 
+        
+        for (i = 0; i < x.length; i++) {  
+            if (!x[i].innerHTML.toLowerCase().includes(input)) { 
+                container[i].style.display="none"; 
+            } 
+            else { 
+                container[i].style.display="flex";                  
+            } 
+        } 
+    } 
+</script>

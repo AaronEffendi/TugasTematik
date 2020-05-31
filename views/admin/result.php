@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="form-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-
+    
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -23,6 +23,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'FORMID',
             'FORMLISTID',
+            [
+                'attribute' => 'FORMLISTTITLE',
+                'value' => 'formlist.FORMLISTTITLE',
+            ],
             'FORMDATESTART',
             'FORMDATEEND',
 

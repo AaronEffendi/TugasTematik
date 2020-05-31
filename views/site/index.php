@@ -188,7 +188,7 @@ $this->title = 'UMN SURVEY';
                                 ],
                             ];
                         }
-                        elseif($formTypeId == 7){ // Linear Scale - Vertical bar
+                        elseif($formTypeId == 6){ // Linear Scale - Vertical bar
                             $type = 'bar';
                             $datasets = null;
                             $datasets[0] = [
@@ -234,6 +234,71 @@ $this->title = 'UMN SURVEY';
                         ]);
                         echo "<br><br><br><br>";                        
                     }
+                }
+            }
+
+            #################################################
+            $labels = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+            foreach($graphTrend as $formIDs => $formQuestionIDs){
+                foreach($formQuestionIDs as $formQuestionID => $formOptionValues){
+                    // foreach($formOptionValues as $formOptionValue){
+                        if(in_array($roleID, $forRoleTrend[$formQuestionID])){
+                            $countAvailableData++;
+                            $data = array();
+                            $bgColor = array();
+                            $bdColor = array();
+                            $datasets = array();
+                            $clientOptions = array();
+                            
+                            $keys = array_keys( $formOptionValues );
+                            
+                            for($x = 0; $x < sizeof($keys); $x++ ) { 
+                                for($y = 0; $y < sizeof($month_keys); $y++){
+                                    array_push($data, $formOptionValues[$keys[$x]][$month_keys[$y]]);
+                                }
+                                // $data[$x] = $countArray[$keys[$x]];
+                                $bgColor[$x] = $backgroundColor[$x];
+                                $bdColor[$x] = $borderColor[$x];
+
+                                $datasets[$x] = 
+                                [
+                                    'label' => $keys[$x],
+                                    'backgroundColor' => $backgroundColor[$x],
+                                    'borderColor' => $borderColor[$x],
+                                    'pointBackgroundColor' => "rgba(179,181,198,1)",
+                                    'pointBorderColor' => "#fff",
+                                    'pointHoverBackgroundColor' => "#fff",
+                                    'pointHoverBorderColor' => "rgba(179,181,198,1)",
+                                    'data' => $data
+                                ];
+                                $data = [];
+                            }
+                            
+                            $formQuestion = FormQuestion::find()->select(['FORMQUESTIONTYPEID', 'FORMQUESTIONNAME'])->where(['FORMQUESTIONID' => $formQuestionID])->one();
+                            $formTypeId = $formQuestion['FORMQUESTIONTYPEID'];
+                            $formQuestionName = $formQuestion['FORMQUESTIONNAME'];
+                            $formTitle = FormList::find()->select(['FORMLISTTITLE'])
+                                ->innerJoin('FORM', 'FORM.FORMLISTID = FORMLIST.FORMLISTID')
+                                ->where(['FORM.FORMID' => $formIDs])->one()['FORMLISTTITLE'];
+
+                            echo "<h1> $formTitle <h1>";
+                            echo "<h3> $formQuestionName </h3><br>";
+                            echo $chart = ChartJs::widget([
+                                'type' => 'line',
+                                // 'options' => [
+                                //     'height' => 200,
+                                //     'width' => 200,
+                                // ],
+                                'data' => [
+                                    'labels' => $labels,
+                                    'datasets' => $datasets,
+                                ],
+                                'clientOptions' =>  $clientOptions,
+                            ]);
+                            echo "<br><br><br><br>";                        
+                        }
+                    // }
                 }
             }
 

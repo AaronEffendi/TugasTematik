@@ -6,7 +6,7 @@ use yii\base\Model;
 use yii\db\ActiveRecord;
 class Country extends Model{
     public function question($id){
-        $command = Yii::$app->db->createCommand("SELECT a.formQuestionID AS ID,a.formQuestionName AS Name,a.formDescription AS Description,a.formQuestionTypeID AS ID_type
+        $command = Yii::$app->db->createCommand("SELECT a.formQuestionID AS ID,a.formQuestionName AS Name,a.formDescription AS Description,a.formQuestionTypeID AS ID_type,a.formRequired AS Required
         FROM formquestion a, formquestiontype b,formlist c
         WHERE a.formQuestionTypeID = b.formQuestionTypeID
         AND a.formListID = c.formListID
@@ -23,8 +23,8 @@ class Country extends Model{
         return $command;
     }
      // ini untuk insert answer pada iterasi pertama
-    public function insertAnswer($sequence,$idFormAnswer,$id,$value,$formListID){
-        $commandFormAnswer = Yii::$app->db->createCommand("INSERT INTO FORMANSWER(FORMANSWERID,USEREMAIL,FORMID,FORMANSWERDATE,FORMANSWERSTATUS) VALUES($idFormAnswer,'rully.saputra@student.umn.ac.id',$formListID,SYSDATE,1)")->execute();
+    public function insertAnswer($sequence,$email,$idFormAnswer,$id,$value,$formListID){
+        $commandFormAnswer = Yii::$app->db->createCommand("INSERT INTO FORMANSWER(FORMANSWERID,USEREMAIL,FORMID,FORMANSWERDATE,FORMANSWERSTATUS) VALUES($idFormAnswer,'$email',$formListID,SYSDATE,1)")->execute();
         $commandFormAnswerDetail = Yii::$app->db->createCommand("INSERT INTO FORMANSWERDETAIL(FORMANSWERDETAILID,FORMQUESTIONID,FORMANSWERID,FORMANSWERDETAILVALUE) VALUES($sequence,$id,$idFormAnswer,'$value')")->execute();
 
     }

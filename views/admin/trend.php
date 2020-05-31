@@ -25,11 +25,13 @@ use app\models\UserJob;
         "rgba(192,192,192,1)", "rgba(128,0,0,1)", "rgba(0,128,0,1)");
     $type = null;
 
-    
-    $keys = array_keys( $countArray ); 
+    $labels = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
     for($x = 0; $x < sizeof($keys); $x++ ) { 
-        $labels[$x] = $keys[$x];
-        $data[$x] = $countArray[$keys[$x]];
+        for($y = 0; $y < sizeof($month_keys); $y++){
+            array_push($data, $countArray[$keys[$x]][$month_keys[$y]]);
+        }
+        // $data[$x] = $countArray[$keys[$x]];
         $bgColor[$x] = $backgroundColor[$x];
         $bdColor[$x] = $borderColor[$x];
 
@@ -42,84 +44,10 @@ use app\models\UserJob;
             'pointBorderColor' => "#fff",
             'pointHoverBackgroundColor' => "#fff",
             'pointHoverBorderColor' => "rgba(179,181,198,1)",
-            'data' => $countArray[$keys[$x]]
-        ];
-
-        // echo "key: ". $keys[$x] . ", value: " 
-        //         . $countArray[$keys[$x]] . "\n"; 
-        // note:   $keys[$x] untuk generate optionValue (nilai untuk sumbu X)
-        //         $countArray[$keys[$x]] untuk generate COUNT (jumlah orang yg pilih) optionValue tsb (nilai untuk sumbu Y)
-    }
-
-
-    if($formQuestion->FORMQUESTIONTYPEID == 3 || $formQuestion->FORMQUESTIONTYPEID == 5){ // Multiple choice - Pie
-        $type = 'pie';
-        $datasets = null;
-        $datasets[0] = [
-            'label' => $labels,
-            'backgroundColor' => $bgColor,
-            'borderColor' => $bdColor,
-            'pointBackgroundColor' => "rgba(179,181,198,1)",
-            'pointBorderColor' => "#fff",
-            'pointHoverBackgroundColor' => "#fff",
-            'pointHoverBorderColor' => "rgba(179,181,198,1)",
             'data' => $data
         ];
-    }
-    elseif($formQuestion->FORMQUESTIONTYPEID == 4){ // Checkbox - Horizontal bar
-        $type = 'horizontalBar';
-        $datasets = null;
-        $datasets[0] = [
-            'label' => $formQuestion->FORMQUESTIONNAME,
-            'backgroundColor' => $bgColor,
-            'borderColor' => $bdColor,
-            'pointBackgroundColor' => "rgba(179,181,198,1)",
-            'pointBorderColor' => "#fff",
-            'pointHoverBackgroundColor' => "#fff",
-            'pointHoverBorderColor' => "rgba(179,181,198,1)",
-            'data' => $data
-        ];
-        $clientOptions = [
-            'scales' => [
-                'xAxes' => [[
-                    'ticks' => [
-                        'beginAtZero' => 'true', 
-                        # Sumber: 
-                        # https://github.com/2amigos/yii2-chartjs-widget/issues/22
-                        # https://github.com/2amigos/yii2-chartjs-widget/issues/32
-                    ]
-                ]],
-            ],
-        ];
-    }
-    elseif($formQuestion->FORMQUESTIONTYPEID == 6){ // Linear Scale - Vertical bar
-        $type = 'bar';
-        $datasets = null;
-        $datasets[0] = [
-            'label' => $formQuestion->FORMQUESTIONNAME,
-            'backgroundColor' => $bgColor,
-            'borderColor' => $bdColor,
-            'pointBackgroundColor' => "rgba(179,181,198,1)",
-            'pointBorderColor' => "#fff",
-            'pointHoverBackgroundColor' => "#fff",
-            'pointHoverBorderColor' => "rgba(179,181,198,1)",
-            'data' => $data
-        ];
-        $clientOptions = [
-            'scales' => [
-                'yAxes' => [[
-                    'ticks' => [
-                        'beginAtZero' => 'true', 
-                        # Sumber: 
-                        # https://github.com/2amigos/yii2-chartjs-widget/issues/22
-                        # https://github.com/2amigos/yii2-chartjs-widget/issues/32
-                    ]
-                ]],
-            ],
-        ];
-    }
-    else{ // Trend
-        $type = 'line';
+
+        $data = [];
     }
 
     ///////////////////////////////////
@@ -145,11 +73,6 @@ use app\models\UserJob;
     //
     ///////////////////////////////////
 ?>
-
-<!-- Sumber:
-    https://github.com/2amigos/yii2-chartjs-widget 
-    https://stackoverflow.com/questions/31215170/how-do-i-make-a-link-use-post-method-in-yii 
--->
     
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -179,10 +102,10 @@ use app\models\UserJob;
     <?php ActiveForm::end(); ?>
 
     <?= "<br>".Html::a('Back', ['answer', 'id' => $formID], ['class' => 'btn btn-danger'])."<br><br><br>" ?>
-
+    
     <?=
         $chart = ChartJs::widget([
-            'type' => $type,
+            'type' => 'line',
             // 'options' => [
             //     'height' => 200,
             //     'width' => 200,
@@ -194,5 +117,3 @@ use app\models\UserJob;
             'clientOptions' =>  $clientOptions,
         ]);
     ?>
-
-?>

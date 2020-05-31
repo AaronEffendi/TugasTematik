@@ -7,6 +7,7 @@ use app\models\FormList;
 use app\models\FormListSearch;
 use app\models\Form;
 use app\models\FormSearch;
+use app\models\ResultSearch;
 use app\models\FormQuestion;
 use app\models\Model;
 use app\models\FormAnswer;
@@ -38,7 +39,7 @@ class AdminController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['GET'],
                 ],
             ],
         ];
@@ -360,7 +361,19 @@ class AdminController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $formAnswerId = FormAnswer::find()
+                        ->select(['FORMANSWERID'])
+                        ->where(['FORMID' => $id])
+                        ->all();
+        if($formAnswerId != null){
+            foreach($formAnswerId as $answerId){
+                FormAnswerDetail::deleteAll(['FORMANSWERID' => $answerId['FORMANSWERID']]);
+            }
+            FormAnswer::deleteAll(['FORMID' => $id]);
+        }
+        
+        FormPublish::deleteAll(['FORMID' => $id]);
+        Form::deleteAll(['FORMID' => $id]);
 
         return $this->redirect(['index']);
     }
@@ -383,7 +396,7 @@ class AdminController extends Controller
 
     public function actionResult()
     {
-        $searchModel = new FormSearch();
+        $searchModel = new ResultSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('result', [
@@ -409,6 +422,10 @@ class AdminController extends Controller
         ->from('FORMANSWER')
         ->innerJoin('FORM', 'FORM.FORMID = FORMANSWER.FORMID')
         ->where(['FORMANSWER.FORMID' => $id])->one();
+
+        $totalForm = Form::find()
+        ->where(['FORMLISTID' => $formListID])
+        ->count();
 
         // $formListID = $formListID["FORMLISTID"];
         // echo "<pre>";
@@ -440,7 +457,11 @@ class AdminController extends Controller
                 // $answers["$row[USEREMAIL]"]["FORMQUESTIONNAME"] = array();
                 // $answers["$row[USEREMAIL]"]["FORMANSWERDETAILVALUE"] = array();
             } 
-            $answers["$row[USEREMAIL]"]["$row[FORMQUESTIONNAME]"] = $row["FORMANSWERDETAILVALUE"];
+            if(empty($answers["$row[USEREMAIL]"]["$row[FORMQUESTIONNAME]"])){
+                $answers["$row[USEREMAIL]"]["$row[FORMQUESTIONNAME]"] = $row["FORMANSWERDETAILVALUE"];
+            }else{
+                $answers["$row[USEREMAIL]"]["$row[FORMQUESTIONNAME]"] = $answers["$row[USEREMAIL]"]["$row[FORMQUESTIONNAME]"].", ".$row["FORMANSWERDETAILVALUE"];
+            }
             // array_push($answers["$row[USEREMAIL]"]["FORMANSWERDETAILVALUE"], $row["FORMANSWERDETAILVALUE"]);
         }
 
@@ -458,6 +479,7 @@ class AdminController extends Controller
             'answers' => $answers,
             'formQuestionData' => $formQuestionData,
             'id' => $id,
+            'totalForm' => $totalForm,
         ]);
     }
 
@@ -539,7 +561,8 @@ class AdminController extends Controller
         $isPublished = FormPublish::find()   
         ->where([
             'FORMQUESTIONID' => $formQuestionID,
-            'FORMID' => $formID])->one();
+            'FORMID' => $formID,
+            'TREND' => 0])->one();
 
         if ($modelFormPublish->load(Yii::$app->request->post())){
             if(!empty($modelFormPublish->LECTURER) || !empty($modelFormPublish->PUBLICS) || !empty($modelFormPublish->STAFF) || !empty($modelFormPublish->STUDENT)){
@@ -618,6 +641,92 @@ class AdminController extends Controller
         ]);
     }
 
+    public function actionTrend($formQuestionID, $formID){
+        $modelFormPublish = new FormPublish(); 
+        $formQuestion = FormQuestion::findOne($formQuestionID); // Untuk dapetin keseluruhan informasi formQuestion
+        
+        $formQuestionOption = FormQuestionOption::find()
+                                ->where(['FORMQUESTIONID' => $formQuestionID])->all(); // Untuk dapeti semua formQuestionOption
+                         
+        $isPublished = FormPublish::find()   
+        ->where([
+            'FORMQUESTIONID' => $formQuestionID,
+            // 'FORMID' => $formID,
+            'TREND' => 1])->one();
+
+        if ($modelFormPublish->load(Yii::$app->request->post())){
+            if(!empty($modelFormPublish->LECTURER) || !empty($modelFormPublish->PUBLICS) || !empty($modelFormPublish->STAFF) || !empty($modelFormPublish->STUDENT)){
+                if($isPublished == NULL){
+                    $transaction = Yii::$app->db->beginTransaction();
+                    $modelFormPublish->TREND = 1;
+                    $modelFormPublish->save();
+                    $transaction->commit();
+                }
+                else{                    
+                    $transaction = Yii::$app->db->beginTransaction();
+                    Yii::$app->db->createCommand()->update('FORMPUBLISH', 
+                    [
+                        'LECTURER' => $modelFormPublish->LECTURER,
+                        'PUBLICS' => $modelFormPublish->PUBLICS,
+                        'STAFF' => $modelFormPublish->STAFF,
+                        'STUDENT' => $modelFormPublish->STUDENT,
+
+                    ], 
+                    [
+                        'FORMQUESTIONID' => $modelFormPublish->FORMQUESTIONID,
+                    ],)->execute();
+                    $transaction->commit();
+                }
+
+                // Pindah controller
+                // return Yii::$app->runAction('site/index');
+                // return Url::to(['site/index']);
+                // return $this->redirect(['site/index']);
+                
+            }
+            else{
+                echo "<script>alert('Please select at least one of the option')</script>";
+            }
+        }
+
+        $countArray = []; 
+        $months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+        
+        foreach($formQuestionOption as $formOption){
+            foreach($months as $month){
+                $countArray["$formOption->FORMQUESTIONVALUE"][$month] = 0; // Awalnya diinisialisasi 0 semua
+            }
+        }
+
+        $keys = array_keys( $countArray ); 
+        $month_keys = array_keys( $countArray[$keys[0]]);
+        for($x = 0; $x < sizeof($keys); $x++ ) { 
+            for($y = 0; $y < sizeof($month_keys); $y++){
+                // Masukin JUMLAH orang yang ngejawab pilihan A ke array A, dst.
+                $countArray[$keys[$x]][$month_keys[$y]] += FormAnswerDetail::find()
+                            ->innerJoin('FORMANSWER', 'FORMANSWER.FORMANSWERID = FORMANSWERDETAIL.FORMANSWERID')
+                            ->innerJoin('FORM', 'FORM.FORMID = FORMANSWER.FORMID')
+                            ->where(["FORMANSWERDETAILVALUE" => $keys[$x], "UPPER(to_char(FORMDATESTART, 'Mon'))" => $month_keys[$y]])
+                            ->count();          
+            }
+        } 
+
+        // echo "<pre>";
+        // print_r($keys);
+        // print_r($month_keys);
+        // print_r($countArray);
+        // echo "</pre>";
+        return $this->render('trend', [
+            'formQuestion' => $formQuestion,
+            'countArray' => $countArray,
+            'keys' => $keys,
+            'month_keys' => $month_keys,
+            'formQuestionOption' => $formQuestionOption,
+            'formID' => $formID,
+            'modelFormPublish' => $modelFormPublish,
+            'isPublished' => $isPublished,
+        ]);
+    }
     
     public function actionStatus($id)
     {

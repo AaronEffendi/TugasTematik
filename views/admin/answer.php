@@ -18,6 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?= Html::a('<span class="btn-label">Download</span>', ['admin/excel', 'id' => $id], ['class' => 'btn btn-primary']) ?>
+    <?= " ".Html::a('Back', ['result'], ['class' => 'btn btn-danger']) ?>
 
     <br/><br/>
 
@@ -30,9 +31,19 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?php foreach($formQuestionName as $formQuestionName => $formQuestionTypeId): ?>
                             <th>
                                 <?php
-                                    if($formQuestionTypeId == 3 || $formQuestionTypeId == 4 || $formQuestionTypeId == 5 || $formQuestionTypeId == 7){
-                                        echo "$formQuestionName ";
-                                        echo Html::a('<i class="fa fa-pie-chart"></i>', Url::to(['admin/chart', 'formQuestionID' => $formQuestionID, 'formID' => $id]));
+                                    if($formQuestionTypeId == 3 || $formQuestionTypeId == 4 || $formQuestionTypeId == 5 || $formQuestionTypeId == 6){
+                                        $img = '';
+                                        if($formQuestionTypeId == 3 || $formQuestionTypeId == 5)
+                                            $img = '<i class="fas fa-chart-pie"></i>';
+                                        else if($formQuestionTypeId == 4 || $formQuestionTypeId == 6)
+                                            $img = '<i class="fas fa-chart-bar"></i>';
+
+                                        echo Html::a("$formQuestionName $img", Url::to(['admin/chart', 'formQuestionID' => $formQuestionID, 'formID' => $id]));
+
+                                        if($totalForm > 1){
+                                            echo "<br>";
+                                            echo Html::a('See Trend <i class="fas fa-chart-line"></i>', Url::to(['admin/trend', 'formQuestionID' => $formQuestionID, 'formID' => $id]));
+                                        }
                                     }
                                     else{
                                         echo $formQuestionName;

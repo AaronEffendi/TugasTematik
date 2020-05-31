@@ -57,7 +57,14 @@ HomeAsset::register($this);
                     </div>             
                     <div class="col-xl-2 col-lg-2 col-md-3">
                         <div class="header-right-btn f-right d-none d-lg-block">
-                            <a href="<?= Url::toRoute('site/login')?>" class="btn header-btn">Login</a>
+                            <?php
+                                if(Yii::$app->session->get('role') != NULL){
+                                    echo "<a href='".Url::toRoute('login/logout')."' class='btn header-btn'>Logout</a>";
+                                }
+                                else{
+                                    echo "<a href='".Url::toRoute('login/index')."' class='btn header-btn'>Login</a>";
+                                }
+                            ?>
                         </div>
                     </div>
                     <!-- Mobile Menu -->

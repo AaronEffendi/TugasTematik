@@ -46,7 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ]);
                     },
                     'delete' => function($url,$model) {
-                        return Html::a('<i class="fas fa-trash"></i>', Url::to(['admin/delete', 'id' => $model->FORMLISTID]), [
+                        return Html::a('<i class="fas fa-trash"></i>', Url::to(['admin/delete', 'id' => $model->FORMID]), [
                             'title' => Yii::t('app', 'delete')
                         ]);
                     }
