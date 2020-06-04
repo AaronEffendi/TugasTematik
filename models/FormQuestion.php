@@ -70,7 +70,8 @@ class FormQuestion extends \yii\db\ActiveRecord
     public function upload()
     {
         if ($this->validate()) {
-            $this->FORMIMAGE->saveAs('uploads/' . $this->FORMIMAGE->baseName . '.' . $this->FORMIMAGE->extension);
+            if($this->FORMIMAGE != null)
+                $this->FORMIMAGE->saveAs('uploads/' . $this->FORMIMAGE->baseName . '.' . $this->FORMIMAGE->extension);
             return true;
         } else {
             return false;

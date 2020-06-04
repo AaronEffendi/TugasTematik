@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?= $form->field($model, 'user',[
                         'template'=>"<h3>{label}</h3>{input}"
                         ])->checkboxList([
-                            4 => 'STAFF', 2 => 'LECTURER', 3 => 'STUDENT']); ?>
+                            1 => 'PUBLIC', 2 => 'LECTURER', 3 => 'STUDENT', 4 => 'STAFF']); ?>
 
                         <?= $form->field($model, 'PRODI',[
                             'template'=>"<h3>{label}</h3>{input}"
