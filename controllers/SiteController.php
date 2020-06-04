@@ -86,8 +86,14 @@ class SiteController extends Controller
         if(Yii::$app->session->get('role') != NULL)
             $roleID = Yii::$app->session->get('role');
         
-        echo "ROLE: $roleID";
-        $model = Formlist::find()->all();
+        // echo "ROLE: $roleID";
+        $model = Form::find()
+        ->select([
+            'FORM.FORMID', 'FORM.FORMDATESTART', 'FORM.FORMDATEEND', 'FORM.USERJOBID', 'FORM.FORMSTATUS',
+            'FORMLIST.FORMLISTID', 'FORMLIST.FORMLISTTOTALSECTION', 
+            'FORMLIST.FORMLISTTOTALQUESTION', 'FORMLIST.FORMLISTTITLE'])
+        ->joinWith(['formlist'])->all();
+
         $data = array();
         $modelFormPublish = FormPublish::find()->where(['TREND' => 0])->all();
         // $modelFormAnswer = FormAnswer::find()->where(['FORMID' => $modelFormPublish[0]->FORMID])->all();
@@ -282,8 +288,15 @@ class SiteController extends Controller
     {
         return $this->render('index');
     }
-    public function actionForm($formlistID)
+    public function actionForm($formID)
     {
+        $formlistID = Form::find()
+        ->select([
+            'FORM.FORMID', 'FORM.FORMDATESTART', 'FORM.FORMDATEEND', 'FORM.USERJOBID', 'FORM.FORMSTATUS',
+            'FORMLIST.FORMLISTID', 'FORMLIST.FORMLISTTOTALSECTION', 
+            'FORMLIST.FORMLISTTOTALQUESTION', 'FORMLIST.FORMLISTTITLE'])
+        ->joinWith(['formlist'])->one()['FORMLISTID'];
+
         $formlist = Formlist::find()->where(['FORMLISTID' => $formlistID])->one();
         $data;$value;$id;
         $model = new Country();
@@ -297,8 +310,10 @@ class SiteController extends Controller
         $modelsFormQuestion = new FormQuestion;
         $modelsFormQuestionOption = new FormQuestionOption;
         $modelsFormAnswerDetail = new FormAnswerDetail();
-        return $this->render('form',['FormAnswerDetail' => $modelsFormAnswerDetail,'data' => $data,'value' => $value, 'formlist' => $formlist,'formID' =>$modelForm['FORMID']]);
+        
+        return $this->render('form',['FormAnswerDetail' => $modelsFormAnswerDetail,'data' => $data,'value' => $value, 'formlist' => $formlist,'formID' =>$formID]);
     }
+
     public function actionAnswer(){
         $modelFormAnswer = new FormAnswerDetail;
         $model = new Country();

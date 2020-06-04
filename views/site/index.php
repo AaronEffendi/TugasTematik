@@ -33,7 +33,7 @@ $this->title = 'UMN SURVEY';
                         <div class="row d-flex align-items-center">
                             <div class="col-lg-7 col-md-9 ">
                                 <div class="hero__caption">
-                                    <h1 data-animation="fadeInLeft" data-delay=".4s"><?= $form->FORMLISTTITLE?></h1>
+                                    <h1 data-animation="fadeInLeft" data-delay=".4s"><?= $form->formlist->FORMLISTTITLE?></h1>
                                     <p data-animation="fadeInLeft" data-delay=".6s">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravi.</p>
                                     <!-- Hero-btn -->
                                     <div class="hero__btn" data-animation="fadeInLeft" data-delay=".8s">
@@ -81,11 +81,11 @@ $this->title = 'UMN SURVEY';
                                     <span  class="flaticon-tasks"></span>
                                 </div>
                                 <div class="do-caption">
-                                    <h4><?= $form->FORMLISTTITLE?></h4>
-                                    <p>Hunky dory barney fanny around up the duff no biggie loo cup of tea jolly good ruddy say arse!</p>
+                                    <h4><?= $form->formlist->FORMLISTTITLE?></h4>
+                                    <p><?= "Take a survey now! <br> Start from ".$form->FORMDATESTART." until ".$form->FORMDATEEND?></p>
                                 </div>
                                 <div class="do-btn">
-                                    <a href="<?= Url::toRoute(['site/form', 'formlistID' => $form->FORMLISTID])?>"><i class="ti-arrow-right"></i>FIIL FORM</a>
+                                    <a href="<?= Url::toRoute(['site/form', 'formID' => $form->FORMID])?>"><i class="ti-arrow-right"></i>FIIL FORM</a>
                                 </div>
                             </div>
                         </div>
