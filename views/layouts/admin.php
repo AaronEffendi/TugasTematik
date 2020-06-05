@@ -36,6 +36,7 @@ DashboardAsset::register($this);
                 <li class="sidebar-item"><?= Html::a('Create Using Template', ['admin/template'], ['class' => 'sidebar-link']) ?></li>
                 <li class="sidebar-item"><?= Html::a('Spread Out', ['admin/spread'], ['class' => 'sidebar-link']) ?></li>
                 <li class="sidebar-item"><?= Html::a('Result', ['admin/result'], ['class' => 'sidebar-link']) ?></li>
+                <li class="sidebar-item"><?= Html::a('Log Out', ['login/logout'], ['class' => 'sidebar-link']) ?></li>
             </ul>
 		</div>
 	</nav>

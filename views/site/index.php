@@ -34,7 +34,7 @@ $this->title = 'UMN SURVEY';
                             <div class="col-lg-7 col-md-9 ">
                                 <div class="hero__caption">
                                     <h1 data-animation="fadeInLeft" data-delay=".4s"><?= $form->formlist->FORMLISTTITLE?></h1>
-                                    <p data-animation="fadeInLeft" data-delay=".6s">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravi.</p>
+                                    <p data-animation="fadeInLeft" data-delay=".6s"><?= "Take a survey now! <br> Start from ".$form->FORMDATESTART." until ".$form->FORMDATEEND?></p>
                                     <!-- Hero-btn -->
                                     <div class="hero__btn" data-animation="fadeInLeft" data-delay=".8s">
                                         <a href="<?= Url::toRoute('site/index')?>#recentform" class="btn hero-btn">MORE INFO</a>
@@ -85,7 +85,7 @@ $this->title = 'UMN SURVEY';
                                     <p><?= "Take a survey now! <br> Start from ".$form->FORMDATESTART." until ".$form->FORMDATEEND?></p>
                                 </div>
                                 <div class="do-btn">
-                                    <a href="<?= Url::toRoute(['site/form', 'formID' => $form->FORMID])?>"><i class="ti-arrow-right"></i>FIIL FORM</a>
+                                    <a href="<?= Url::toRoute(['site/form', 'formID' => $form->FORMID])?>"><i class="ti-arrow-right"></i>FILL FORM</a>
                                 </div>
                             </div>
                         </div>

@@ -28,14 +28,22 @@ $this->title = 'UMN SURVEY';
         </div>
         <div class="container-fluid p-0">
             <div class="row ">
-                <?php foreach($data as $formlist) :?>
+                <?php foreach($data as $form) :?>
                     <div id="formItem" class="col-lg-3 col-md-4">
                         <div class="single-visited mb-30">
                             <div class="visited-img">
                                 <img src="assets/img/visit/visit_1.jpg" alt="">
                             </div>
                             <div class="visited-cap">
-                                <h3><a href="<?= Url::toRoute(['site/form', 'formlistID' => $formlist->FORMLISTID])?>"><?= $formlist->FORMLISTTITLE?></a></h3>
+                            <?php 
+                                if(strlen($form->formlist->FORMLISTTITLE) > 15){
+                                    $title = substr($form->formlist->FORMLISTTITLE, 0, 15)." ...";
+                                }
+                                else{
+                                    $title = $form->formlist->FORMLISTTITLE;
+                                }
+                            ?>
+                                <h3><a style='font-size: 20px;'  title="<?=$form->formlist->FORMLISTTITLE?>" href="<?= Url::toRoute(['site/form', 'formID' => $form->FORMID])?>"><?= $title."<br>".$form->FORMDATESTART?></a></h3>
                                 <!-- <p>Email Marketing</p> -->
                             </div>
                         </div>

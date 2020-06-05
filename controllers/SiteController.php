@@ -23,6 +23,7 @@ use app\models\FormQuestionOption;
 use app\models\FormQuestionType;
 use app\models\FormAnswerDetail;
 use app\models\FormAnswer;
+use app\models\UserJob;
 
 use app\models\FormPublish;
 
@@ -85,14 +86,18 @@ class SiteController extends Controller
         
         if(Yii::$app->session->get('role') != NULL)
             $roleID = Yii::$app->session->get('role');
-        
-        // echo "ROLE: $roleID";
+        if($roleID == 1)
+            $jobName = 'PUBLICS';
+        else
+            $jobName = strtoupper(UserJob::find()->select(['USERJOBNAME'])->where(['USERJOBID' => $roleID])->one()['USERJOBNAME']);
+
         $model = Form::find()
         ->select([
             'FORM.FORMID', 'FORM.FORMDATESTART', 'FORM.FORMDATEEND', 'FORM.USERJOBID', 'FORM.FORMSTATUS',
             'FORMLIST.FORMLISTID', 'FORMLIST.FORMLISTTOTALSECTION', 
             'FORMLIST.FORMLISTTOTALQUESTION', 'FORMLIST.FORMLISTTITLE'])
-        ->joinWith(['formlist'])->all();
+        ->joinWith(['formlist'])
+        ->where(['FORMSTATUS' => 1, $jobName => 1])->all();
 
         $data = array();
         $modelFormPublish = FormPublish::find()->where(['TREND' => 0])->all();
@@ -111,9 +116,21 @@ class SiteController extends Controller
             $formQuestionOption = FormQuestionOption::find()
                 ->where(['FORMQUESTIONID' => $formPublish->FORMQUESTIONID])->all();
 
+            $formQuestionTypeID = FormQuestion::find()->where(['FORMQUESTIONID' => $formPublish->FORMQUESTIONID])->one()['FORMQUESTIONTYPEID'];
+
             $countArray = [];
             foreach($formQuestionOption as $formOption){
                 $countArray["$formOption->FORMQUESTIONVALUE"] = 0; // Awalnya diinisialisasi 0 semua
+            }
+    
+            if($formQuestionTypeID == 6){
+                $countArray = [];
+                $countArray = ['1', '2', '3', '4', '5'];
+                $countArray['1'] = 0;
+                $countArray['2'] = 0;
+                $countArray['3'] = 0;
+                $countArray['4'] = 0;
+                $countArray['5'] = 0;
             }
 
             $keys = array_keys( $countArray ); 
@@ -280,7 +297,23 @@ class SiteController extends Controller
     }
     public function actionSurvey()
     {
-        $model = Formlist::find()->all();
+        $roleID = 1;
+        
+        if(Yii::$app->session->get('role') != NULL)
+            $roleID = Yii::$app->session->get('role');
+        if($roleID == 1)
+            $jobName = 'PUBLICS';
+        else
+            $jobName = strtoupper(UserJob::find()->select(['USERJOBNAME'])->where(['USERJOBID' => $roleID])->one()['USERJOBNAME']);
+
+        $model = Form::find()
+        ->select([
+            'FORM.FORMID', 'FORM.FORMDATESTART', 'FORM.FORMDATEEND', 'FORM.USERJOBID', 'FORM.FORMSTATUS',
+            'FORMLIST.FORMLISTID', 'FORMLIST.FORMLISTTOTALSECTION', 
+            'FORMLIST.FORMLISTTOTALQUESTION', 'FORMLIST.FORMLISTTITLE'])
+        ->joinWith(['formlist'])
+        ->where(['FORMSTATUS' => 1, $jobName => 1])->all();
+
         $data = array();
         return $this->render('survey',['data' => $model]);
     }
@@ -295,10 +328,9 @@ class SiteController extends Controller
             'FORM.FORMID', 'FORM.FORMDATESTART', 'FORM.FORMDATEEND', 'FORM.USERJOBID', 'FORM.FORMSTATUS',
             'FORMLIST.FORMLISTID', 'FORMLIST.FORMLISTTOTALSECTION', 
             'FORMLIST.FORMLISTTOTALQUESTION', 'FORMLIST.FORMLISTTITLE'])
-        ->joinWith(['formlist'])->one()['FORMLISTID'];
+        ->joinWith(['formlist'])->where(['FORMID' => $formID])->one()['FORMLISTID'];
 
         $formlist = Formlist::find()->where(['FORMLISTID' => $formlistID])->one();
-        $data;$value;$id;
         $model = new Country();
         if(isset($formlistID)){
             $modelForm = Form::find()->where(['FORMLISTID' => $formlistID])->one();

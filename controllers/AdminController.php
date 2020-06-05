@@ -54,6 +54,14 @@ class AdminController extends Controller
         $searchModel = new FormSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        // // Function untuk automatic close form apabila dateNow > dateEnd
+        // $forms = Form::find()->where(['FORMSTATUS' => 1])->all();
+        // foreach($forms as $form){
+        //     if(strtotime($form->FORMDATEEND) < strtoupper(strtotime(date('d-M-y')))){
+        //         echo "This Form: $form->FORMID is deprecated<br>";
+        //     }
+        // }
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -540,10 +548,25 @@ class AdminController extends Controller
     {
         $model = new SendFrom();
         if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
+            Yii::$app->db->createCommand()->update('FORM', ['PUBLICS' => 0, 'LECTURER' => 0, 'STUDENT' => 0, 'STAFF' => 0], 'FORMID = '.$id)->execute();
+            foreach(Yii::$app->request->post()['SendFrom']['user'] as $target){
+                if($target == 1){
+                    Yii::$app->db->createCommand()->update('FORM', ['PUBLICS' => 1], 'FORMID = '.$id)->execute();
+                }
+                else if($target == 2){
+                    Yii::$app->db->createCommand()->update('FORM', ['LECTURER' => 1], 'FORMID = '.$id)->execute();
+                }
+                else if($target == 3){
+                    Yii::$app->db->createCommand()->update('FORM', ['STUDENT' => 1], 'FORMID = '.$id)->execute();
+                }
+                else if($target == 4){
+                    Yii::$app->db->createCommand()->update('FORM', ['STAFF' => 1], 'FORMID = '.$id)->execute();
+                }
+            }
             Yii::$app->session->setFlash('contactFormSubmitted');
 
             return $this->refresh();
-        }
+        }else
         return $this->render('send', [
             'model' => $model,
             'id' => $id,
@@ -610,6 +633,16 @@ class AdminController extends Controller
         $countArray = []; 
         foreach($formQuestionOption as $formOption){
             $countArray["$formOption->FORMQUESTIONVALUE"] = 0; // Awalnya diinisialisasi 0 semua
+        }
+        
+        if($formQuestion->FORMQUESTIONTYPEID == 6){
+            $countArray = [];
+            $countArray = ['1', '2', '3', '4', '5'];
+            $countArray['1'] = 0;
+            $countArray['2'] = 0;
+            $countArray['3'] = 0;
+            $countArray['4'] = 0;
+            $countArray['5'] = 0;
         }
 
         $keys = array_keys( $countArray ); 

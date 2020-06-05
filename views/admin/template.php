@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'template' => '{add}',
                 'buttons' => [
                     'add' =>  function($url,$model) {
-                        return Html::a('<i class="fas fa-save"></i>', $url, [
+                        return Html::a('<i class="fas fa-plus-circle"></i>', $url, [
                             'title' => Yii::t('app', 'add')
                         ]);
                     },

@@ -60,7 +60,7 @@ $required = false;
                         </div>
                     </div>
                 <?php } ?>
-            <?php } else if($row['ID_TYPE'] == 7){?>
+            <?php } else if($row['ID_TYPE'] == 6){?>
                 <div class="card mb-3 p-5">
                     <div class="card-body">
                         <h3 class="card-title"><?= Html::encode($row['NAME'])?></h3>
@@ -79,13 +79,18 @@ $required = false;
             <?php } else  {?>
                 <div class="card mb-3 p-5">
                     <div class="card-body">
-                        <h3 class="card-title"><?= Html::encode($row['NAME'])?></h3>
-                        <p class="card-text"><?= Html::encode($row['DESCRIPTION'])?></p>
                         <?php if(html::encode($row['REQUIRED'])==1){
                             $required = true;
                         }else{
                             $required = false;
                         } ?>
+                        <h3 class="card-title">
+                            <?php 
+                                if($required) echo Html::encode($row['NAME'])." <span style='color: red;'>*</span>";
+                                else echo Html::encode($row['NAME']);
+                            ?>
+                        </h3>
+                        <p class="card-text"><?= Html::encode($row['DESCRIPTION'])?></p>
                         <?php if($row['ID_TYPE'] == 3){?>
                             <?php foreach($value as $tmp) : ?>
                                 <?php 
