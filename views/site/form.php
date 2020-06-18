@@ -108,7 +108,12 @@ $required = false;
                                     if($tmp['ID'] == $row['ID']){?>
                                         <!-- <div class="custom-control"> -->
                                             <input type="checkbox" id="<?= Html::encode($row['ID'])?>" value="<?= Html::encode($tmp['VAL'])?>"name="<?= Html::encode($row['ID'])?>[]" required />
-                                            <label for=""><?= Html::encode($tmp['VAL'])?></label><br>
+                                            
+                                            <?php if(Html::encode($tmp['VAL'])=='Other'){ ?>
+                                                <label for=""><?= Html::input('text',Html::encode($row['ID']),'', ['class' => 'form-control', 'required'=>$required, 'placeholder' => "Other", ])?></label><br>
+                                            <?php }else{ ?>
+                                                <label for=""><?= Html::encode($tmp['VAL'])?></label><br>
+                                            <?php } ?>
                                         <!-- </div> -->
                                 <?php }?>
                             <?php endforeach;Html::endForm()?>
