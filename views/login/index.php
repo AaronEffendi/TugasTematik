@@ -56,6 +56,7 @@ $this->title = 'Login';
         padding: 40px 40px;
     }
 
+<<<<<<< HEAD
     .btn {
         font-weight: 700;
         height: 36px;
@@ -181,3 +182,10 @@ $this->title = 'Login';
         color: rgb(12, 97, 33);
     }
 </style>
+=======
+    <!-- <div class="col-lg-offset-1" style="color:#999;">
+        You may login with <strong>admin/admin</strong> or <strong>demo/demo</strong>.<br>
+        To modify the username/password, please check out the code <code>app\models\User::$users</code>.
+    </div> -->
+</div>
+>>>>>>> 552ebf5723291e9fac3ca4013009d9c3e9e25dca
